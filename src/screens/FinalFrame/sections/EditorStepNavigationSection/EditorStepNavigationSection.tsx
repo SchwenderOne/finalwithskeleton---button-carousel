@@ -1,94 +1,112 @@
 export const EditorStepNavigationSection = (): JSX.Element => {
   const steps = ["Start", "Step 1", "Step 2", "Step 3", "Step 4"];
+  const navBackgroundSrc =
+    "https://www.figma.com/api/mcp/asset/d89c974d-4887-4e3a-ac59-a65fe60098b4";
+  const playIconSrc =
+    "https://www.figma.com/api/mcp/asset/49a3b2c0-e5e2-471e-bebd-c5675efee62d";
+  const gearIconSrc =
+    "https://www.figma.com/api/mcp/asset/975d2646-f647-4a3f-a7d3-0c5fe6a3a6e9";
 
   return (
-    <div className="absolute top-0 left-0 w-[1512px] h-[93px] flex bg-[#505050] overflow-hidden">
-      <div className="w-[1512px] h-[95px] relative overflow-hidden bg-[url(https://c.animaapp.com/ViJx1BUZ/img/blue@4x.png)] bg-cover bg-[50%_50%]">
-        <div className="flex flex-col w-[1512px] items-start gap-2.5 rounded-[0px_0px_27.87px_27.87px] border-2 border-solid border-[#dbdbdb54] rotate-180 bg-blend-color-dodge bg-[linear-gradient(0deg,rgba(245,245,245,0.4)_0%,rgba(245,245,245,0.4)_100%),linear-gradient(0deg,rgba(15,15,15,1)_0%,rgba(15,15,15,1)_100%)] absolute top-0 left-0">
-          <div className="relative self-stretch w-full h-[116px] bg-[#00000001]" />
+    <div className="absolute top-0 left-0 h-[95px] w-full overflow-hidden bg-[#505050]">
+      <div className="absolute inset-0 overflow-hidden">
+        <img
+          className="absolute inset-0 h-[95px] w-full max-w-none"
+          alt="Navbar background"
+          src={navBackgroundSrc}
+        />
+        <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)]" />
+      </div>
+
+      <div className="absolute inset-0 overflow-hidden rounded-t-[27.87px] border-2 border-solid border-[rgba(220,220,220,0.33)]">
+        <div className="absolute inset-0 rounded-t-[27.87px] bg-[#0f0f0f] mix-blend-color-dodge" />
+        <div className="absolute inset-0 rounded-t-[27.87px] bg-[rgba(245,245,245,0.4)]" />
+      </div>
+
+      <div className="absolute right-8 top-[23px] inline-flex items-center gap-[29px]">
+        <div className="relative h-[49px] w-[86px]">
+          <img
+            className="absolute -left-px -top-px h-[51px] w-[88px]"
+            alt="Rectangle"
+            src="https://c.animaapp.com/ViJx1BUZ/img/rectangle-107.svg"
+          />
+          <div className="absolute -left-px top-2.5 flex h-[26px] w-[86px] items-center justify-center [-webkit-text-stroke:0.61px_transparent] bg-[linear-gradient(0deg,rgba(85,85,85,0.15)_0%,rgba(255,255,255,0.15)_100%)] bg-blend-exclusion [-webkit-background-clip:text] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[19px] font-medium leading-[20.1px] tracking-[-0.19px] text-white">
+            Save
+          </div>
         </div>
 
-        <div className="inline-flex items-center gap-[29px] absolute top-[18px] left-[1252px]">
-          <div className="relative w-[86px] h-[49px]">
-            <img
-              className="absolute -top-px -left-px w-[88px] h-[51px]"
-              alt="Rectangle"
-              src="https://c.animaapp.com/ViJx1BUZ/img/rectangle-107.svg"
-            />
-            <div className="absolute top-2.5 -left-px w-[86px] h-[26px] flex items-center justify-center [-webkit-text-stroke:0.61px_transparent] bg-blend-exclusion bg-[linear-gradient(0deg,rgba(85,85,85,0.15)_0%,rgba(255,255,255,0.15)_100%)_1] [-webkit-background-clip:text] [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-white text-[19px] text-center tracking-[-0.19px] leading-[20.1px]">
-              Save
-            </div>
-          </div>
-
+        <div className="relative h-[34.42px] w-[34.42px] shrink-0 rounded-[24.62px] border border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] shadow-[0px_0px_25.097px_0.988px_rgba(0,0,0,0.05)]">
           <img
-            className="relative w-[86.59px] h-[85.79px] mt-[-18.00px] mb-[-18.79px]"
-            alt="Frame"
-            src="https://c.animaapp.com/ViJx1BUZ/img/frame-2147223119.svg"
-          />
-
-          <img
-            className="relative w-[86.17px] h-[85.58px] mt-[-18.00px] mb-[-18.58px] mr-[-26.08px]"
-            alt="Frame"
-            src="https://c.animaapp.com/ViJx1BUZ/img/frame-2147223120.svg"
+            className="absolute left-[10px] top-[10px] h-[15px] w-[15px]"
+            alt="Play"
+            src={playIconSrc}
           />
         </div>
 
-        <div className="inline-flex items-center gap-[35px] absolute top-[23px] left-8">
-          <div className="inline-flex items-center gap-3.5 relative flex-[0_0_auto]">
-            <img
-              className="relative flex-[0_0_auto]"
-              alt="Home button"
-              src="https://c.animaapp.com/ViJx1BUZ/img/home-button.svg"
-            />
-            <div className="relative w-[89px] h-[21px] overflow-hidden">
-              <div className="absolute top-0 left-0 w-[91px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#272727] text-[21.3px] tracking-[-0.21px] leading-[22.6px] whitespace-nowrap">
-                Caesar 1
-              </div>
+        <div className="relative h-[34px] w-[34px] shrink-0 rounded-[24.62px] border border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] shadow-[0px_0px_25.097px_0.988px_rgba(0,0,0,0.05)]">
+          <img
+            className="absolute left-[7px] top-[7.5px] h-[19px] w-5"
+            alt="Settings"
+            src={gearIconSrc}
+          />
+        </div>
+      </div>
+
+      <div className="absolute left-8 top-[23px] flex h-[49px] items-center gap-[35px]">
+        <div className="relative flex h-[49px] items-center gap-3.5">
+          <img
+            className="relative h-[33.42px] w-[24.92px] shrink-0"
+            alt="Home button"
+            src="https://c.animaapp.com/ViJx1BUZ/img/home-button.svg"
+          />
+          <div className="relative flex h-[49px] items-center">
+            <div className="whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-[21.3px] font-medium leading-[22.6px] tracking-[-0.21px] text-[#272727]">
+              Caesar 1
             </div>
           </div>
+        </div>
 
-          <div className="relative w-2.5 h-[30px]">
-            <img
-              className="absolute top-[3px] left-1 w-[3px] h-[26px]"
-              alt="Seperation line"
-              src="https://c.animaapp.com/ViJx1BUZ/img/seperationline.svg"
-            />
-          </div>
+        <div className="relative flex h-[49px] w-2.5 items-center">
+          <img
+            className="absolute left-1 top-[11px] h-[26px] w-[3px]"
+            alt="Seperation line"
+            src="https://c.animaapp.com/ViJx1BUZ/img/seperationline.svg"
+          />
+        </div>
 
-          <div className="inline-flex items-center gap-6 relative flex-[0_0_auto]">
-            {steps.map((step, index) => (
-              <div key={step} className="inline-flex items-center gap-6">
-                {index === 0 ? (
-                  <div className="relative w-[51px] h-[21px]">
-                    <div className="absolute top-px left-[3px] w-[45px] h-5 flex items-center bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#4c4c4c] text-xl tracking-[-0.20px] leading-[21.2px] whitespace-nowrap">
-                      Start
-                    </div>
+        <div className="relative inline-flex h-[49px] items-center gap-6">
+          {steps.map((step, index) => (
+            <div key={step} className="inline-flex h-[49px] items-center gap-6">
+              {index === 0 ? (
+                <div className="relative flex h-[49px] w-[51px] items-center">
+                  <div className="ml-[3px] flex h-5 w-[45px] items-center whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-xl font-medium leading-[21.2px] tracking-[-0.2px] text-[#4c4c4c]">
+                    Start
                   </div>
-                ) : (
-                  <div className="relative w-[62px] h-[23px]">
-                    <p className="absolute top-0 left-0.5 w-[60px] h-5 flex items-center justify-center bg-blend-exclusion opacity-[0.76] [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-white text-xl text-center tracking-[-0.20px] leading-[21.2px] whitespace-nowrap">
-                      <span className="tracking-[-0.04px]">Step</span>
-                      <span className="text-base tracking-[-0.03px] leading-[17.0px]">
-                        &nbsp;
-                      </span>
-                      <span className="tracking-[-0.04px]">{index}</span>
-                    </p>
-                  </div>
-                )}
-                {index < steps.length - 1 && (
-                  <img
-                    className="relative w-3.5 h-[17px]"
-                    alt="Frame"
-                    src={
-                      index === 0
-                        ? "https://c.animaapp.com/ViJx1BUZ/img/frame-2147223109.svg"
-                        : "https://c.animaapp.com/ViJx1BUZ/img/frame-2147223116.svg"
-                    }
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              ) : (
+                <div className="relative flex h-[49px] w-[62px] items-center">
+                  <p className="ml-0.5 flex h-5 w-[60px] items-center justify-center whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-xl font-medium leading-[21.2px] tracking-[-0.2px] text-white opacity-[0.76]">
+                    <span className="tracking-[-0.04px]">Step</span>
+                    <span className="text-base leading-[17px] tracking-[-0.03px]">
+                      &nbsp;
+                    </span>
+                    <span className="tracking-[-0.04px]">{index}</span>
+                  </p>
+                </div>
+              )}
+              {index < steps.length - 1 && (
+                <img
+                  className="relative h-[17px] w-3.5"
+                  alt="Frame"
+                  src={
+                    index === 0
+                      ? "https://c.animaapp.com/ViJx1BUZ/img/frame-2147223109.svg"
+                      : "https://c.animaapp.com/ViJx1BUZ/img/frame-2147223116.svg"
+                  }
+                />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
