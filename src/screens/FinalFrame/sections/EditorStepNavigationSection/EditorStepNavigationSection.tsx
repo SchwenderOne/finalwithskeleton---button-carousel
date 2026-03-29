@@ -8,20 +8,14 @@ export const EditorStepNavigationSection = (): JSX.Element => {
     "https://www.figma.com/api/mcp/asset/975d2646-f647-4a3f-a7d3-0c5fe6a3a6e9";
 
   return (
-    <div className="absolute top-0 left-0 h-[95px] w-full overflow-hidden bg-[#505050]">
-      <div className="absolute inset-0 overflow-hidden">
-        <img
-          className="absolute inset-0 h-[95px] w-full max-w-none"
-          alt="Navbar background"
-          src={navBackgroundSrc}
-        />
+    <div className="absolute top-0 left-0 h-[95px] w-full overflow-hidden rounded-t-[27.87px] bg-[#505050]">
+      <div className="absolute inset-0 overflow-hidden rounded-t-[27.87px]">
+        <img className="absolute inset-0 h-[95px] w-full max-w-none" alt="Navbar background" src={navBackgroundSrc} />
         <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)]" />
+        <div className="absolute inset-0 bg-[#0f0f0f] mix-blend-color-dodge" />
+        <div className="absolute inset-0 bg-[rgba(245,245,245,0.4)]" />
       </div>
-
-      <div className="absolute inset-0 overflow-hidden rounded-t-[27.87px] border-2 border-solid border-[rgba(220,220,220,0.33)]">
-        <div className="absolute inset-0 rounded-t-[27.87px] bg-[#0f0f0f] mix-blend-color-dodge" />
-        <div className="absolute inset-0 rounded-t-[27.87px] bg-[rgba(245,245,245,0.4)]" />
-      </div>
+      <div className="pointer-events-none absolute inset-0 rounded-t-[27.87px] border-2 border-solid border-[rgba(220,220,220,0.33)]" />
 
       <div className="absolute right-8 top-[23px] inline-flex items-center gap-[29px]">
         <div className="relative h-[49px] w-[86px]">

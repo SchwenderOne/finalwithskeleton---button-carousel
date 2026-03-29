@@ -51,6 +51,7 @@ export const FinalFrame = (): JSX.Element => {
             transformOrigin: "top left",
           }}
         >
+          <div className="absolute top-0 left-0 h-[95px] w-full bg-[#000103]" />
           <EditorStepNavigationSection />
           <div
             className="absolute top-[82px] left-0 h-[902px] w-full rounded-xl bg-[#00000001] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.13),inset_-1px_0_1px_rgba(0,0,0,0.11)] backdrop-blur-[2.5px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(2.5px)_brightness(100.0%)_saturate(100.0%)]"
@@ -96,8 +97,8 @@ export const FinalFrame = (): JSX.Element => {
                         src="https://c.animaapp.com/ViJx1BUZ/img/container-4.svg"
                       />
 
-                      <div className="relative w-14 h-[25px]">
-                        <div className="absolute top-[calc(50.00%_-_12px)] left-[calc(50.00%_-_28px)] w-14 h-[25px] items-center justify-center text-white text-[17.7px] text-center tracking-[-0.18px] leading-[18.8px] [-webkit-line-clamp:1] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical]">
+                      <div className="relative h-[25px] w-[60px]">
+                        <div className="absolute inset-0 flex items-center justify-center whitespace-nowrap text-white text-[17.7px] text-center tracking-[-0.18px] leading-[18.8px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium">
                           Create
                         </div>
                       </div>
