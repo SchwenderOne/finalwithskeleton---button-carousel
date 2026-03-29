@@ -1,4 +1,7 @@
 export const CharacterCreationSidebarSection = (): JSX.Element => {
+  const resizeHandleIconSrc =
+    "https://www.figma.com/api/mcp/asset/99dde92a-08f9-414f-84cc-3a0dcb4fa560";
+
   return (
     <div className="absolute top-[161px] left-7 w-[418px] h-[799px]">
       <div className="absolute top-0 left-0 w-[418px] h-[799px] rounded-xl shadow-[0px_8px_40px_#0000001f] bg-[linear-gradient(0deg,rgba(207,207,207,1)_0%,rgba(207,207,207,1)_100%)]">
@@ -205,11 +208,15 @@ export const CharacterCreationSidebarSection = (): JSX.Element => {
         </button>
       </div>
 
-      <img
-        className="absolute top-[342px] left-[402px] w-8 h-[60px] bg-blend-color-dodge"
-        alt="Button"
-        src="https://c.animaapp.com/ViJx1BUZ/img/button-2.svg"
-      />
+      <button className="absolute top-[342px] left-[395px] flex h-[60px] w-[38px] items-center justify-center overflow-hidden rounded-[15px] border-2 border-solid border-[rgba(220,220,220,0.8)] bg-transparent">
+        <div className="absolute inset-0 bg-[#0f0f0f] mix-blend-color-dodge" />
+        <div className="absolute inset-0 rounded-[16px] bg-transparent" />
+        <img
+          className="relative z-10 h-[11.23px] w-[18.18px] rotate-90"
+          alt="Resize sidebar"
+          src={resizeHandleIconSrc}
+        />
+      </button>
     </div>
   );
 };
