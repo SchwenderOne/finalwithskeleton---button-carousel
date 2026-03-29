@@ -11,6 +11,7 @@ const NOISE_BACKGROUND_URL =
 const PREVIEW_LEFT = 478;
 const PREVIEW_WIDTH = FRAME_WIDTH - PREVIEW_LEFT - 24;
 const PREVIEW_INNER_WIDTH = PREVIEW_WIDTH - 23;
+const PREVIEW_DOT_PATTERN = "radial-gradient(circle, #dcdcdc 1.6px, transparent 1.6px)";
 
 export const FinalFrame = (): JSX.Element => {
   const [scale, setScale] = useState(1);
@@ -51,10 +52,18 @@ export const FinalFrame = (): JSX.Element => {
           }}
         >
           <EditorStepNavigationSection />
-          <div className="absolute top-[82px] left-0 h-[902px] w-full rounded-xl bg-[#00000001] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.13),inset_-1px_0_1px_rgba(0,0,0,0.11)] backdrop-blur-[2.5px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(2.5px)_brightness(100.0%)_saturate(100.0%)]" />
+          <div
+            className="absolute top-[82px] left-0 h-[902px] w-full rounded-xl bg-[#00000001] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.13),inset_-1px_0_1px_rgba(0,0,0,0.11)] backdrop-blur-[2.5px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(2.5px)_brightness(100.0%)_saturate(100.0%)]"
+            style={{ backgroundImage: `url(${NOISE_BACKGROUND_URL})`, backgroundSize: "100% 100%" }}
+          />
 
           <div
             className="absolute top-[82px] left-0 h-[902px] w-full rounded-xl bg-[100%_100%]"
+            style={{ backgroundImage: `url(${NOISE_BACKGROUND_URL})` }}
+          />
+
+          <div
+            className="pointer-events-none absolute top-[95px] left-0 h-[34px] w-full bg-[100%_100%] opacity-100"
             style={{ backgroundImage: `url(${NOISE_BACKGROUND_URL})` }}
           />
 
@@ -79,7 +88,7 @@ export const FinalFrame = (): JSX.Element => {
                     </div>
                   </button>
 
-                  <button className="all-[unset] box-border flex flex-col w-[129px] items-start gap-2.5 px-6 py-[7px] relative bg-[#85848433] rounded-[35.75px] border-[0.4px] border-solid border-[#ffffff4c] shadow-[0px_4px_4px_#00000040,inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+                  <button className="all-[unset] box-border relative flex h-[33px] w-[129px] items-center self-center px-6 py-0 bg-[#85848433] rounded-[35.75px] border-[0.4px] border-solid border-[#ffffff4c] shadow-[0px_4px_4px_#00000040,inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
                     <div className="flex items-center gap-[5px] relative self-stretch w-full flex-[0_0_auto]">
                       <img
                         className="relative w-[21px] h-[22px] ml-[-1.00px]"
@@ -139,7 +148,11 @@ export const FinalFrame = (): JSX.Element => {
 
               <div
                 className="absolute top-6 left-[23px] h-[825px] rounded-[2px] border border-[#d8d8d8] bg-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.38)]"
-                style={{ width: PREVIEW_INNER_WIDTH }}
+                style={{
+                  width: PREVIEW_INNER_WIDTH,
+                  backgroundImage: PREVIEW_DOT_PATTERN,
+                  backgroundSize: "32px 32px",
+                }}
               />
 
               <div className="absolute top-[43px] left-[calc(50.00%_-_96px)] w-[193px] h-[33px] bg-[#11111152] rounded-[19.06px] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]">

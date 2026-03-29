@@ -1,6 +1,5 @@
 export const CharacterCreationSidebarSection = (): JSX.Element => {
-  const resizeHandleIconSrc =
-    "https://www.figma.com/api/mcp/asset/99dde92a-08f9-414f-84cc-3a0dcb4fa560";
+  const resizeHandleButtonSrc = "https://c.animaapp.com/ViJx1BUZ/img/button-1.svg";
 
   return (
     <div className="absolute top-[161px] left-7 w-[418px] h-[799px]">
@@ -16,7 +15,7 @@ export const CharacterCreationSidebarSection = (): JSX.Element => {
             />
 
             <div className="absolute top-0 left-0 w-[293px] h-[49px]">
-              <div className="absolute top-0 left-0 w-[293px] h-[49px] [display:-webkit-box] items-center justify-center bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#1f1f1f] text-[17.7px] text-center tracking-[-0.18px] leading-[18.8px] overflow-hidden text-ellipsis [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
+              <div className="absolute top-0 left-0 flex w-[293px] h-[49px] items-center justify-center bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#1f1f1f] text-[17.7px] text-center tracking-[-0.18px] leading-[18.8px] overflow-hidden text-ellipsis">
                 Create your Character
               </div>
             </div>
@@ -115,13 +114,13 @@ export const CharacterCreationSidebarSection = (): JSX.Element => {
           </div>
 
           <img
-            className="absolute top-9 left-[338px] w-[15px] h-[26px] bg-blend-color-dodge"
+            className="absolute top-9 left-[338px] w-[15px] h-[26px] mix-blend-color-dodge"
             alt="Button"
             src="https://c.animaapp.com/ViJx1BUZ/img/button.svg"
           />
 
           <img
-            className="absolute top-9 left-0 w-[15px] h-[26px] bg-blend-color-dodge"
+            className="absolute top-9 left-0 w-[15px] h-[26px] mix-blend-color-dodge"
             alt="Button"
             src="https://c.animaapp.com/ViJx1BUZ/img/button-1.svg"
           />
@@ -208,13 +207,11 @@ export const CharacterCreationSidebarSection = (): JSX.Element => {
         </button>
       </div>
 
-      <button className="absolute top-[342px] left-[395px] flex h-[60px] w-[38px] items-center justify-center overflow-hidden rounded-[15px] border-2 border-solid border-[rgba(220,220,220,0.8)] bg-transparent">
-        <div className="absolute inset-0 bg-[#0f0f0f] mix-blend-color-dodge" />
-        <div className="absolute inset-0 rounded-[16px] bg-transparent" />
+      <button className="all-[unset] box-border absolute top-[342px] left-[395px] flex h-[60px] w-[38px] items-center justify-center">
         <img
-          className="relative z-10 h-[11.23px] w-[18.18px] rotate-90"
+          className="h-[58px] w-[33px] mix-blend-color-dodge"
           alt="Resize sidebar"
-          src={resizeHandleIconSrc}
+          src={resizeHandleButtonSrc}
         />
       </button>
     </div>
