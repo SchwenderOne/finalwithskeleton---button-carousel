@@ -1,3 +1,5 @@
+import { SidebarCarousel } from "./SidebarCarousel";
+
 export const CharacterCreationSidebarSection = (): JSX.Element => {
   const resizeHandleButtonSrc = "https://c.animaapp.com/ViJx1BUZ/img/button-1.svg";
 
@@ -22,109 +24,7 @@ export const CharacterCreationSidebarSection = (): JSX.Element => {
           </div>
         </div>
 
-        <div className="absolute top-[306px] left-8 w-[353px] h-[99px]">
-          <div className="absolute top-0 left-[calc(50.00%_-_170px)] w-[339px] h-[99px] bg-[#50505033] rounded-[19.06px] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]">
-            <div className="absolute top-1.5 left-[15px] w-[89px] h-20 flex">
-              <div className="mt-[0.7px] w-[87.46px] h-[78.38px] ml-[0.9px] flex">
-                <div className="w-[87.46px] h-[78.38px] relative bg-[url(https://c.animaapp.com/ViJx1BUZ/img/rectangle-111.svg)] bg-[100%_100%]">
-                  <div className="relative top-1 left-[3px] w-[81px] h-[71px]">
-                    <div className="absolute top-0 left-0 w-[81px] h-[52px] bg-[url(https://c.animaapp.com/ViJx1BUZ/img/frame-2112@2x.png)] bg-cover bg-[50%_50%]" />
-
-                    <div className="flex flex-col w-[81px] items-start absolute top-14 left-px">
-                      <div className="flex flex-col w-[80.71px] items-start relative flex-[0_0_auto]">
-                        <div className="relative self-stretch h-[5.45px] mt-[-0.26px] bg-blend-exclusion [font-family:'Aeonik_Pro-Bold',Helvetica] font-bold text-white text-[3.8px] tracking-[-0.15px] leading-[3.9px]">
-                          Laboratory Reports
-                        </div>
-
-                        <div className="relative self-stretch h-[4.68px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-white text-[3.2px] tracking-[-0.13px] leading-[3.3px]">
-                          Created on 29/10/2024
-                        </div>
-
-                        <p className="relative self-stretch h-[4.68px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#9e9e9e] text-[3.2px] tracking-[-0.13px] leading-[3.3px]">
-                          Last respondent 42 minutes ago
-                        </p>
-                      </div>
-                    </div>
-
-                    <img
-                      className="absolute top-[70px] left-[76px] w-[5px] h-px"
-                      alt="Ellipsis"
-                      src="https://c.animaapp.com/ViJx1BUZ/img/ellipsis-2.svg"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute top-2.5 left-[241px] w-[88px] h-[79px] flex">
-              <div className="mt-0 w-[87.46px] h-[78.38px] ml-0 flex bg-[url(https://c.animaapp.com/ViJx1BUZ/img/rectangle-111-1.svg)] bg-[100%_100%]">
-                <div className="mt-[4.0px] w-[80.71px] h-[70.72px] ml-[3.4px] relative">
-                  <div className="absolute top-px left-0 w-[81px] h-[52px] bg-[url(https://c.animaapp.com/ViJx1BUZ/img/frame-2111@2x.png)] bg-cover bg-[50%_50%]" />
-
-                  <div className="w-[81px] top-14 left-0 flex flex-col items-start absolute">
-                    <div className="relative self-stretch h-[5.45px] mt-[-0.26px] bg-blend-exclusion [font-family:'Aeonik_Pro-Bold',Helvetica] font-bold text-white text-[3.8px] tracking-[-0.15px] leading-[3.9px]">
-                      Equipment Safety Assessment Form
-                    </div>
-
-                    <div className="relative self-stretch h-[4.68px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-white text-[3.2px] tracking-[-0.13px] leading-[3.3px]">
-                      Created on 15/04/2024
-                    </div>
-
-                    <p className="relative self-stretch h-[4.68px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#9e9e9e] text-[3.2px] tracking-[-0.13px] leading-[3.3px]">
-                      Last respondent 3 hours ago
-                    </p>
-                  </div>
-
-                  <img
-                    className="absolute top-[70px] left-[76px] w-[5px] h-px"
-                    alt="Ellipsis"
-                    src="https://c.animaapp.com/ViJx1BUZ/img/ellipsis-2-1.svg"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute top-[-7px] left-[calc(50.00%_-_64px)] w-[127px] h-[111px] flex bg-[#84848433] rounded-[35.75px] border-[0.4px] border-solid border-[#ffffff4c] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]">
-              <div className="mt-[10.3px] w-[100.98px] h-[90.49px] ml-[12.7px] relative bg-[url(https://c.animaapp.com/ViJx1BUZ/img/rectangle-111-2.svg)] bg-[100%_100%]">
-                <div className="absolute top-[5px] left-1 w-[93px] h-[61px] bg-[url(https://c.animaapp.com/ViJx1BUZ/img/frame-2111-1@2x.png)] bg-cover bg-[50%_50%]" />
-
-                <div className="w-[93px] top-[69px] left-1 flex flex-col items-start absolute">
-                  <div className="flex flex-col w-[93.19px] items-start relative flex-[0_0_auto]">
-                    <div className="relative self-stretch h-[6.29px] mt-[-0.30px] bg-blend-exclusion [font-family:'Aeonik_Pro-Bold',Helvetica] font-bold text-white text-[4.4px] tracking-[-0.17px] leading-[4.5px]">
-                      Visitor Check-in
-                    </div>
-
-                    <div className="relative self-stretch h-[5.4px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-white text-[3.7px] tracking-[-0.15px] leading-[3.8px]">
-                      Created on 02/09/2024
-                    </div>
-
-                    <p className="relative self-stretch h-[5.4px] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#9e9e9e] text-[3.7px] tracking-[-0.15px] leading-[3.8px]">
-                      Last respondent 1 hour ago
-                    </p>
-                  </div>
-                </div>
-
-                <img
-                  className="absolute top-[84px] left-[92px] w-[5px] h-px"
-                  alt="Ellipsis"
-                  src="https://c.animaapp.com/ViJx1BUZ/img/ellipsis-2-2.svg"
-                />
-              </div>
-            </div>
-          </div>
-
-          <img
-            className="absolute top-9 left-[338px] w-[15px] h-[26px] mix-blend-color-dodge"
-            alt="Button"
-            src="https://c.animaapp.com/ViJx1BUZ/img/button.svg"
-          />
-
-          <img
-            className="absolute top-9 left-0 w-[15px] h-[26px] mix-blend-color-dodge"
-            alt="Button"
-            src="https://c.animaapp.com/ViJx1BUZ/img/button-1.svg"
-          />
-        </div>
+        <SidebarCarousel />
 
         <div className="absolute top-[152px] left-11 w-[346px] h-[111px] flex bg-[#ffffff4a] rounded-[15.45px] border-[0.5px] border-solid border-white shadow-[0px_0px_41.27px_1.62px_#0000000d]">
           <div className="mt-[9.7px] w-[322.44px] ml-[10.6px] flex">

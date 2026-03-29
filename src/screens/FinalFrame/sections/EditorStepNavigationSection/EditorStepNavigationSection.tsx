@@ -1,9 +1,47 @@
+const HomeIcon = (): JSX.Element => {
+  return (
+    <svg className="h-[33.42px] w-[24.92px] shrink-0" viewBox="0 0 25 34" fill="none">
+      <path
+        d="M8.47 17.87V17.62H8.47C8.58 13.45 11.88 10.13 15.93 10.13L15.95 1.86C15.95 0.3 14.4 -0.54 13.26 0.39L2.26 9.28C1.46 9.98 1 11.01 1 12.09V31.89C1 33.22 2.53 33.92 3.47 33.02L8.47 29.15V17.87Z"
+        fill="#282727"
+      />
+      <path
+        d="M19.62 22.66L23.92 18.78V17.28C23.92 12.89 20.37 9.34 15.98 9.34H15.95V22.56C15.95 23.83 17.33 24.54 18.28 23.76L19.62 22.66Z"
+        fill="#282727"
+      />
+    </svg>
+  );
+};
+
+const PlayIcon = (): JSX.Element => {
+  return (
+    <svg className="h-[15px] w-[15px]" viewBox="0 0 15 15" fill="none">
+      <path
+        d="M1.57 13.27C1.57 14.25 2.18 14.74 2.91 14.74C3.21 14.74 3.54 14.65 3.85 14.47L13.89 8.72C14.6 8.31 14.95 7.94 14.95 7.37C14.95 6.79 14.6 6.42 13.89 6.02L3.85 0.26C3.54 0.09 3.21 0 2.91 0C2.18 0 1.57 0.48 1.57 1.46V13.27Z"
+        fill="#343434"
+      />
+    </svg>
+  );
+};
+
+const StepArrow = ({ active }: { active: boolean }): JSX.Element => {
+  return (
+    <svg className="relative h-[17px] w-3.5" viewBox="0 0 14 17" fill="none">
+      <path
+        d="M5 4L10 9L5 14"
+        stroke={active ? "#4D4D4D" : "#C9C9C9"}
+        strokeWidth="2.1886"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
 export const EditorStepNavigationSection = (): JSX.Element => {
   const steps = ["Start", "Step 1", "Step 2", "Step 3", "Step 4"];
   const navBackgroundSrc =
     "https://www.figma.com/api/mcp/asset/d89c974d-4887-4e3a-ac59-a65fe60098b4";
-  const playIconSrc =
-    "https://www.figma.com/api/mcp/asset/49a3b2c0-e5e2-471e-bebd-c5675efee62d";
   const gearIconSrc =
     "https://www.figma.com/api/mcp/asset/975d2646-f647-4a3f-a7d3-0c5fe6a3a6e9";
 
@@ -30,11 +68,9 @@ export const EditorStepNavigationSection = (): JSX.Element => {
         </div>
 
         <div className="relative h-[34.42px] w-[34.42px] shrink-0 rounded-[24.62px] border border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] shadow-[0px_0px_25.097px_0.988px_rgba(0,0,0,0.05)]">
-          <img
-            className="absolute left-[10px] top-[10px] h-[15px] w-[15px]"
-            alt="Play"
-            src={playIconSrc}
-          />
+          <div className="absolute left-[10px] top-[10px]">
+            <PlayIcon />
+          </div>
         </div>
 
         <div className="relative h-[34px] w-[34px] shrink-0 rounded-[24.62px] border border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] shadow-[0px_0px_25.097px_0.988px_rgba(0,0,0,0.05)]">
@@ -48,11 +84,7 @@ export const EditorStepNavigationSection = (): JSX.Element => {
 
       <div className="absolute left-8 top-[23px] flex h-[49px] items-center gap-[35px]">
         <div className="relative flex h-[49px] items-center gap-3.5">
-          <img
-            className="relative h-[33.42px] w-[24.92px] shrink-0"
-            alt="Home button"
-            src="https://c.animaapp.com/ViJx1BUZ/img/home-button.svg"
-          />
+          <HomeIcon />
           <div className="relative flex h-[49px] items-center">
             <div className="whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-[21.3px] font-medium leading-[22.6px] tracking-[-0.21px] text-[#272727]">
               Caesar 1
@@ -61,11 +93,7 @@ export const EditorStepNavigationSection = (): JSX.Element => {
         </div>
 
         <div className="relative flex h-[49px] w-2.5 items-center">
-          <img
-            className="absolute left-1 top-[11px] h-[26px] w-[3px]"
-            alt="Seperation line"
-            src="https://c.animaapp.com/ViJx1BUZ/img/seperationline.svg"
-          />
+          <div className="absolute left-1 top-[11px] h-[26px] w-[3px] rounded-full bg-[#4d4d4d]" />
         </div>
 
         <div className="relative inline-flex h-[49px] items-center gap-6">
@@ -89,15 +117,7 @@ export const EditorStepNavigationSection = (): JSX.Element => {
                 </div>
               )}
               {index < steps.length - 1 && (
-                <img
-                  className="relative h-[17px] w-3.5"
-                  alt="Frame"
-                  src={
-                    index === 0
-                      ? "https://c.animaapp.com/ViJx1BUZ/img/frame-2147223109.svg"
-                      : "https://c.animaapp.com/ViJx1BUZ/img/frame-2147223116.svg"
-                  }
-                />
+                <StepArrow active={index === 0} />
               )}
             </div>
           ))}
