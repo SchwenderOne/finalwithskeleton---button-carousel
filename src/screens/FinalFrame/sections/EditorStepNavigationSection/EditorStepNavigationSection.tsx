@@ -1,3 +1,27 @@
+import { useEffect, useRef, useState } from "react";
+
+export type EditorStep = "start" | "step-1" | "step-2" | "step-3" | "step-4";
+
+type EditorStepNavigationSectionProps = {
+  projectName: string;
+  activeStep: EditorStep;
+  onProjectNameChange: (name: string) => void;
+  onStepChange: (step: EditorStep) => void;
+};
+
+type StepItem = {
+  id: EditorStep;
+  label: string;
+};
+
+const STEPS: StepItem[] = [
+  { id: "start", label: "Start" },
+  { id: "step-1", label: "Step 1" },
+  { id: "step-2", label: "Step 2" },
+  { id: "step-3", label: "Step 3" },
+  { id: "step-4", label: "Step 4" },
+];
+
 const HomeIcon = (): JSX.Element => {
   return (
     <svg className="h-[33.42px] w-[24.92px] shrink-0" viewBox="0 0 25 34" fill="none">
@@ -29,7 +53,7 @@ const StepArrow = ({ active }: { active: boolean }): JSX.Element => {
     <svg className="relative h-[17px] w-3.5" viewBox="0 0 14 17" fill="none">
       <path
         d="M5 4L10 9L5 14"
-        stroke={active ? "#4D4D4D" : "#C9C9C9"}
+        stroke={active ? "#FFFFFF" : "#8D8D8D"}
         strokeWidth="2.1886"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -38,17 +62,52 @@ const StepArrow = ({ active }: { active: boolean }): JSX.Element => {
   );
 };
 
-export const EditorStepNavigationSection = (): JSX.Element => {
-  const steps = ["Start", "Step 1", "Step 2", "Step 3", "Step 4"];
+export const EditorStepNavigationSection = ({
+  projectName,
+  activeStep,
+  onProjectNameChange,
+  onStepChange,
+}: EditorStepNavigationSectionProps): JSX.Element => {
   const navBackgroundSrc =
     "https://www.figma.com/api/mcp/asset/d89c974d-4887-4e3a-ac59-a65fe60098b4";
   const gearIconSrc =
     "https://www.figma.com/api/mcp/asset/975d2646-f647-4a3f-a7d3-0c5fe6a3a6e9";
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [draftName, setDraftName] = useState(projectName);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setDraftName(projectName);
+  }, [projectName]);
+
+  useEffect(() => {
+    if (isEditingName) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [isEditingName]);
+
+  const commitName = () => {
+    const trimmedName = draftName.trim();
+    const nextName = trimmedName || projectName;
+    onProjectNameChange(nextName);
+    setDraftName(nextName);
+    setIsEditingName(false);
+  };
+
+  const cancelNameEdit = () => {
+    setDraftName(projectName);
+    setIsEditingName(false);
+  };
 
   return (
-    <div className="absolute top-0 left-0 h-[95px] w-full overflow-hidden rounded-t-[27.87px] bg-[#505050]">
+    <div className="absolute left-0 top-0 h-[95px] w-full overflow-hidden rounded-t-[27.87px] bg-[#505050]">
       <div className="absolute inset-0 overflow-hidden rounded-t-[27.87px]">
-        <img className="absolute inset-0 h-[95px] w-full max-w-none" alt="Navbar background" src={navBackgroundSrc} />
+        <img
+          className="absolute inset-0 h-[95px] w-full max-w-none"
+          alt="Navbar background"
+          src={navBackgroundSrc}
+        />
         <div className="absolute inset-0 bg-[rgba(0,0,0,0.3)]" />
         <div className="absolute inset-0 bg-[#0f0f0f] mix-blend-color-dodge" />
         <div className="absolute inset-0 bg-[rgba(245,245,245,0.4)]" />
@@ -82,45 +141,73 @@ export const EditorStepNavigationSection = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="absolute left-8 top-[23px] flex h-[49px] items-center gap-[35px]">
+      <div className="absolute left-8 top-[23px] flex h-[49px] items-center gap-1">
         <div className="relative flex h-[49px] items-center gap-3.5">
           <HomeIcon />
-          <div className="relative flex h-[49px] items-center">
-            <div className="whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-[21.3px] font-medium leading-[22.6px] tracking-[-0.21px] text-[#272727]">
-              Caesar 1
-            </div>
+          <div className="relative flex h-[49px] w-[252px] items-center">
+            {isEditingName ? (
+              <input
+                ref={inputRef}
+                className="h-9 w-full rounded-full border border-[rgba(77,77,77,0.25)] bg-[rgba(255,255,255,0.35)] px-3 outline-none [font-family:'Aeonik_Pro-Medium',Helvetica] text-[21.3px] font-medium leading-[22.6px] tracking-[-0.21px] text-[#272727] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_0_0_1px_rgba(255,255,255,0.12)]"
+                value={draftName}
+                onChange={(event) => setDraftName(event.target.value)}
+                onBlur={commitName}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    commitName();
+                  }
+
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    cancelNameEdit();
+                  }
+                }}
+                aria-label="Project name"
+              />
+            ) : (
+              <button
+                className="h-9 w-full truncate rounded-full px-3 text-left whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-[21.3px] font-medium leading-[22.6px] tracking-[-0.21px] text-[#272727] transition-colors hover:bg-[rgba(255,255,255,0.12)]"
+                type="button"
+                onClick={() => setIsEditingName(true)}
+                title={projectName}
+              >
+                {projectName}
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="relative flex h-[49px] w-2.5 items-center">
+        <div className="relative ml-1 flex h-[49px] w-2.5 items-center">
           <div className="absolute left-1 top-[11px] h-[26px] w-[3px] rounded-full bg-[#4d4d4d]" />
         </div>
 
-        <div className="relative inline-flex h-[49px] items-center gap-6">
-          {steps.map((step, index) => (
-            <div key={step} className="inline-flex h-[49px] items-center gap-6">
-              {index === 0 ? (
-                <div className="relative flex h-[49px] w-[51px] items-center">
-                  <div className="ml-[3px] flex h-5 w-[45px] items-center whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-xl font-medium leading-[21.2px] tracking-[-0.2px] text-[#4c4c4c]">
-                    Start
-                  </div>
-                </div>
-              ) : (
-                <div className="relative flex h-[49px] w-[62px] items-center">
-                  <p className="ml-0.5 flex h-5 w-[60px] items-center justify-center whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-xl font-medium leading-[21.2px] tracking-[-0.2px] text-white opacity-[0.76]">
-                    <span className="tracking-[-0.04px]">Step</span>
-                    <span className="text-base leading-[17px] tracking-[-0.03px]">
-                      &nbsp;
-                    </span>
-                    <span className="tracking-[-0.04px]">{index}</span>
-                  </p>
-                </div>
-              )}
-              {index < steps.length - 1 && (
-                <StepArrow active={index === 0} />
-              )}
-            </div>
-          ))}
+        <div className="relative ml-6 inline-flex h-[49px] items-center gap-6">
+          {STEPS.map((step, index) => {
+            const isActive = activeStep === step.id;
+
+            return (
+              <div key={step.id} className="inline-flex h-[49px] items-center gap-6">
+                <button
+                  className={`relative flex h-[49px] items-center px-1 ${
+                    index === 0 ? "w-[57px]" : "w-[74px] justify-center"
+                  }`}
+                  type="button"
+                  onClick={() => onStepChange(step.id)}
+                  aria-pressed={isActive}
+                >
+                  <span
+                    className={`whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-xl font-medium leading-[21.2px] tracking-[-0.2px] ${
+                      isActive ? "text-white" : "text-[#8d8d8d]"
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                </button>
+                {index < STEPS.length - 1 && <StepArrow active={isActive} />}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

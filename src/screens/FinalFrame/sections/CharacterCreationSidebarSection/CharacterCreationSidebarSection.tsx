@@ -1,117 +1,255 @@
+import { useEffect, useRef, useState } from "react";
 import { SidebarCarousel } from "./SidebarCarousel";
 
-export const CharacterCreationSidebarSection = (): JSX.Element => {
+type CharacterCreationSidebarSectionProps = {
+  width: number;
+  collapsed: boolean;
+  promptText: string;
+  onPromptTextChange: (value: string) => void;
+  onWidthChange: (width: number) => void;
+  onToggleCollapsed: () => void;
+};
+
+const HANDLE_WIDTH = 38;
+const HANDLE_OVERLAP = 23;
+const SIDEBAR_HEIGHT = 799;
+const MIN_SIDEBAR_WIDTH = 360;
+const MAX_SIDEBAR_WIDTH = 520;
+const AUTO_COLLAPSE_THRESHOLD = MIN_SIDEBAR_WIDTH - 28;
+
+export const CharacterCreationSidebarSection = ({
+  width,
+  collapsed,
+  promptText,
+  onPromptTextChange,
+  onWidthChange,
+  onToggleCollapsed,
+}: CharacterCreationSidebarSectionProps): JSX.Element => {
   const resizeHandleButtonSrc = "https://c.animaapp.com/ViJx1BUZ/img/button-1.svg";
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStateRef = useRef({
+    moved: false,
+    shouldCollapse: false,
+    startWidth: width,
+    startX: 0,
+  });
+  const contentWidth = Math.max(0, width - 42);
+  const headerWidth = Math.max(250, width - 79);
+  const promptCardWidth = Math.max(260, width - 72);
+  const lineGap = 16;
+  const promptInnerWidth = Math.max(200, promptCardWidth - 24);
+  const lineWidth = Math.max(120, contentWidth - 145 - lineGap);
+  const referenceLineWidth = Math.max(120, contentWidth - 73 - lineGap);
+  const finishLineWidth = Math.max(120, contentWidth - 43 - 11);
+  const carouselWidth = Math.max(280, width - 65);
+
+  useEffect(() => {
+    if (!isDragging) {
+      return undefined;
+    }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rawWidth = dragStateRef.current.startWidth + (event.clientX - dragStateRef.current.startX);
+      const nextWidth = Math.max(
+        MIN_SIDEBAR_WIDTH,
+        Math.min(MAX_SIDEBAR_WIDTH, rawWidth),
+      );
+
+      if (Math.abs(event.clientX - dragStateRef.current.startX) > 3) {
+        dragStateRef.current.moved = true;
+      }
+
+      dragStateRef.current.shouldCollapse = rawWidth < AUTO_COLLAPSE_THRESHOLD;
+      onWidthChange(nextWidth);
+    };
+
+    const stopDragging = () => {
+      if (dragStateRef.current.moved && dragStateRef.current.shouldCollapse && !collapsed) {
+        onToggleCollapsed();
+      }
+
+      setIsDragging(false);
+      dragStateRef.current.shouldCollapse = false;
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", stopDragging);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", stopDragging);
+    };
+  }, [isDragging, onWidthChange]);
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (collapsed) {
+      return;
+    }
+
+    dragStateRef.current = {
+      moved: false,
+      shouldCollapse: false,
+      startWidth: width,
+      startX: event.clientX,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    setIsDragging(true);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      return undefined;
+    }
+
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
+    return undefined;
+  }, [isDragging]);
+
+  const effectiveWidth = collapsed ? width : width;
+  const wrapperWidth = effectiveWidth + HANDLE_WIDTH - HANDLE_OVERLAP;
 
   return (
-    <div className="absolute top-[161px] left-7 w-[418px] h-[799px]">
-      <div className="absolute top-0 left-0 w-[418px] h-[799px] rounded-xl shadow-[0px_8px_40px_#0000001f] bg-[linear-gradient(0deg,rgba(207,207,207,1)_0%,rgba(207,207,207,1)_100%)]">
-        <div className="w-full h-full bg-[#00000001] rounded-xl backdrop-blur-[6.0px] backdrop-brightness-[92.0%] backdrop-saturate-[105.0%] [-webkit-backdrop-filter:blur(6.0px)_brightness(92.0%)_saturate(105.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.30),inset_1px_0_0_rgba(255,255,255,0.24),inset_0_-1px_4px_rgba(0,0,0,0.11),inset_-1px_0_4px_rgba(0,0,0,0.09)] absolute top-0 left-0" />
+    <div className="absolute left-7 top-[161px]" style={{ width: wrapperWidth, height: SIDEBAR_HEIGHT }}>
+      <div
+        className={`absolute left-0 top-0 h-[799px] rounded-xl shadow-[0px_8px_40px_#0000001f] bg-[linear-gradient(0deg,rgba(207,207,207,1)_0%,rgba(207,207,207,1)_100%)] ${
+          isDragging ? "" : "transition-[width] duration-300 ease-out"
+        }`}
+        style={{ width: effectiveWidth }}
+      >
+        <div className="absolute left-0 top-0 h-full w-full rounded-xl bg-[#00000001] backdrop-blur-[6.0px] backdrop-brightness-[92.0%] backdrop-saturate-[105.0%] [-webkit-backdrop-filter:blur(6.0px)_brightness(92.0%)_saturate(105.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.30),inset_1px_0_0_rgba(255,255,255,0.24),inset_0_-1px_4px_rgba(0,0,0,0.11),inset_-1px_0_4px_rgba(0,0,0,0.09)]" />
 
-        <div className="flex flex-col w-[339px] h-[50px] items-start gap-2.5 pl-[23px] pr-[237px] py-px absolute top-[25px] left-[41px] bg-[#f3f4f6a1] rounded-[41.92px] border border-solid border-white shadow-[0px_0px_42.73px_1.68px_#0000000d]">
-          <div className="inline-flex items-center gap-2.5 px-[30px] py-3.5 relative flex-[0_0_auto] mr-[-0.20px]">
-            <img
-              className="relative w-[21px] h-[22px] mt-[-1.00px] mb-[-1.00px] ml-[-1.00px] mr-[-1.00px]"
-              alt="Container"
-              src="https://c.animaapp.com/ViJx1BUZ/img/container.svg"
-            />
+        <div
+          className={`absolute inset-0 ${
+            isDragging ? "" : "transition-opacity duration-200"
+          } ${collapsed ? "pointer-events-none opacity-0" : "opacity-100"}`}
+        >
+          <div
+            className="absolute left-[41px] top-[25px] flex h-[50px] items-start gap-2.5 rounded-[41.92px] border border-solid border-white bg-[#f3f4f6a1] px-[23px] py-px shadow-[0px_0px_42.73px_1.68px_#0000000d]"
+            style={{ width: headerWidth }}
+          >
+            <div className="relative inline-flex w-full flex-[0_0_auto] items-center gap-2.5 px-[30px] py-3.5">
+              <img
+                className="relative z-10 -my-px -ml-px -mr-px h-[22px] w-[21px] shrink-0"
+                alt="Container"
+                src="https://c.animaapp.com/ViJx1BUZ/img/container.svg"
+              />
 
-            <div className="absolute top-0 left-0 w-[293px] h-[49px]">
-              <div className="absolute top-0 left-0 flex w-[293px] h-[49px] items-center justify-center bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#1f1f1f] text-[17.7px] text-center tracking-[-0.18px] leading-[18.8px] overflow-hidden text-ellipsis">
-                Create your Character
+              <div className="absolute left-0 top-0 h-[49px] w-full">
+                <div className="absolute left-0 top-0 flex h-[49px] w-full items-center justify-center overflow-hidden pl-[58px] pr-6 text-ellipsis bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[17.7px] font-medium leading-[18.8px] tracking-[-0.18px] text-[#1f1f1f]">
+                  Create your Character
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <SidebarCarousel />
+          <SidebarCarousel width={carouselWidth} />
 
-        <div className="absolute top-[152px] left-11 w-[346px] h-[111px] flex bg-[#ffffff4a] rounded-[15.45px] border-[0.5px] border-solid border-white shadow-[0px_0px_41.27px_1.62px_#0000000d]">
-          <div className="mt-[9.7px] w-[322.44px] ml-[10.6px] flex">
-            <div className="w-[322.44px] h-[76.5px] text-[#343434e0] text-[14.5px] tracking-[-0.14px] leading-[15.4px] [-webkit-line-clamp:4] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical]">
-              Write your prompt...
-            </div>
-          </div>
-        </div>
-
-        <div className="flex w-[396px] items-center justify-between absolute top-[108px] left-[21px]">
-          <div className="relative w-[145px] h-[15px]">
-            <p className="absolute top-0 left-0 w-[145px] h-[15px] items-center justify-center text-[#202020] text-[15px] text-center tracking-[-0.45px] leading-[15.9px] whitespace-nowrap [-webkit-line-clamp:0] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical]">
-              What do you think of?
-            </p>
-          </div>
-
-          <img
-            className="relative w-[241.46px] mr-[-1.40px] object-cover"
-            alt="Container"
-            src="https://c.animaapp.com/ViJx1BUZ/img/container-1.svg"
-          />
-        </div>
-
-        <div className="flex w-[396px] h-[15px] items-center justify-between absolute top-[429px] left-[21px]">
-          <div className="relative w-[73px] h-[13px]">
-            <div className="absolute top-0 left-0 w-[73px] h-[13px] items-center justify-center text-[#202020] text-[15px] text-center tracking-[-0.45px] leading-[15.9px] whitespace-nowrap [-webkit-line-clamp:0] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical]">
-              Reference
-            </div>
-          </div>
-
-          <img
-            className="relative w-[317.4px] mr-[-1.40px] object-cover"
-            alt="Container"
-            src="https://c.animaapp.com/ViJx1BUZ/img/container-2.svg"
-          />
-        </div>
-
-        <div className="absolute top-[463px] left-[127px] w-[163px] h-40">
-          <div className="relative w-[148.82%] h-[89.38%] top-[16.88%] left-[-22.62%] bg-[#84848433] rounded-[16.75px] border-[0.4px] border-solid border-[#ffffff4c] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]">
-            <img
-              className="absolute top-[-18px] left-[29px] w-[184px] h-[127px]"
-              alt="Paper"
-              src="https://c.animaapp.com/ViJx1BUZ/img/paper.svg"
+          <div
+            className="absolute left-11 top-[152px] flex h-[111px] rounded-[15.45px] border-[0.5px] border-solid border-white bg-[#ffffff4a] shadow-[0px_0px_41.27px_1.62px_#0000000d]"
+            style={{ width: promptCardWidth }}
+          >
+            <textarea
+              className="mt-[9.7px] ml-[10.6px] h-[85px] resize-none bg-transparent text-[14.5px] font-medium leading-[15.4px] tracking-[-0.14px] text-[#343434e0] outline-none placeholder:text-[#34343499] [font-family:'Aeonik_Pro-Medium',Helvetica]"
+              style={{ width: promptInnerWidth }}
+              placeholder="Write your prompt..."
+              value={promptText}
+              onChange={(event) => onPromptTextChange(event.target.value)}
             />
+          </div>
 
-            <img
-              className="absolute top-[41px] left-[95px] w-14 h-14 aspect-[1]"
-              alt="Featured icon"
-              src="https://c.animaapp.com/ViJx1BUZ/img/featured-icon.svg"
-            />
-
-            <div className="absolute top-[104px] left-5 w-[202px] h-[15px] flex justify-center">
-              <p className="items-center justify-center w-[202px] h-[15px] text-white text-sm text-center tracking-[-0.42px] leading-[14.8px] whitespace-nowrap [-webkit-line-clamp:1] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical]">
-                Drag and drop media below 15MB
+          <div className="absolute left-[21px] top-[108px] flex items-center" style={{ width: contentWidth }}>
+            <div className="relative h-[15px] w-[145px]">
+              <p className="absolute left-0 top-0 h-[15px] w-[145px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
+                What do you think of?
               </p>
             </div>
-          </div>
-        </div>
 
-        <div className="inline-flex h-[15px] items-center gap-[11px] absolute top-[676px] left-[21px]">
-          <div className="relative w-[43.26px] h-[13px]">
-            <div className="absolute top-0 left-0 w-[43px] text-[#202020] text-[15px] tracking-[-0.45px] leading-[15.9px] whitespace-nowrap [-webkit-line-clamp:0] bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical]">
-              Finish
+            <div className="ml-4 h-[4px] rounded-full bg-[#656565]" style={{ width: lineWidth }} />
+          </div>
+
+          <div className="absolute left-[21px] top-[429px] flex h-[15px] items-center" style={{ width: contentWidth }}>
+            <div className="relative h-[13px] w-[73px]">
+              <div className="absolute left-0 top-0 h-[13px] w-[73px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
+                Reference
+              </div>
+            </div>
+
+            <div className="ml-4 h-[4px] rounded-full bg-[#656565]" style={{ width: referenceLineWidth }} />
+          </div>
+
+          <div className="absolute left-[127px] top-[463px] h-40 w-[163px]">
+            <div className="relative left-[-22.62%] top-[16.88%] h-[89.38%] w-[148.82%] rounded-[16.75px] border-[0.4px] border-solid border-[#ffffff4c] bg-[#84848433] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+              <img
+                className="absolute left-[29px] top-[-18px] h-[127px] w-[184px]"
+                alt="Paper"
+                src="https://c.animaapp.com/ViJx1BUZ/img/paper.svg"
+              />
+
+              <img
+                className="absolute left-[95px] top-[41px] h-14 w-14 aspect-[1]"
+                alt="Featured icon"
+                src="https://c.animaapp.com/ViJx1BUZ/img/featured-icon.svg"
+              />
+
+              <div className="absolute left-5 top-[104px] flex h-[15px] w-[202px] justify-center">
+                <p className="h-[15px] w-[202px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-sm font-medium leading-[14.8px] tracking-[-0.42px] text-white">
+                  Drag and drop media below 15MB
+                </p>
+              </div>
             </div>
           </div>
 
-          <img
-            className="relative w-[344.5px] mr-[-1.40px] object-cover"
-            alt="Container"
-            src="https://c.animaapp.com/ViJx1BUZ/img/container-3.svg"
-          />
-        </div>
-
-        <button className="all-[unset] box-border flex flex-col w-[calc(100%_-_264px)] items-start gap-2.5 px-[25px] py-3.5 absolute top-[calc(50.00%_+_318px)] left-[125px] bg-[#50505033] rounded-[27.87px] border-[0.4px] border-solid border-[#0004ff4c] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]">
-          <div className="relative self-stretch w-full h-[31px]">
-            <div className="absolute top-[calc(50.00%_-_16px)] left-[calc(50.00%_-_52px)] w-[104px] h-[31px] flex items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] font-medium text-[#226ab3] text-2xl text-center tracking-[-0.72px] leading-[25.4px]">
-              Create
+          <div className="absolute left-[21px] top-[676px] inline-flex h-[15px] items-center gap-[11px]">
+            <div className="relative h-[13px] w-[43.26px]">
+              <div className="absolute left-0 top-0 w-[43px] overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
+                Finish
+              </div>
             </div>
+
+            <div className="h-[4px] rounded-full bg-[#656565]" style={{ width: finishLineWidth }} />
           </div>
-        </button>
+
+          <button className="all-[unset] box-border absolute left-[125px] top-[calc(50.00%_+_318px)] flex w-[calc(100%_-_264px)] flex-col items-start gap-2.5 rounded-[27.87px] border-[0.4px] border-solid border-[#0004ff4c] bg-[#50505033] px-[25px] py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+            <div className="relative h-[31px] w-full self-stretch">
+              <div className="absolute left-[calc(50.00%_-_52px)] top-[calc(50.00%_-_16px)] flex h-[31px] w-[104px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-2xl font-medium leading-[25.4px] tracking-[-0.72px] text-[#226ab3]">
+                Create
+              </div>
+            </div>
+          </button>
+        </div>
       </div>
 
-      <button className="all-[unset] box-border absolute top-[342px] left-[395px] flex h-[60px] w-[38px] items-center justify-center">
+      <button
+        className={`all-[unset] box-border absolute top-[342px] flex h-[60px] w-[38px] items-center justify-center ${
+          isDragging ? "" : "transition-[left] duration-300 ease-out"
+        }`}
+        style={{ left: effectiveWidth - HANDLE_OVERLAP, touchAction: "none", cursor: "col-resize" }}
+        type="button"
+        onPointerDown={handlePointerDown}
+        onDragStart={(event) => event.preventDefault()}
+        onClick={() => {
+          if (dragStateRef.current.moved) {
+            dragStateRef.current.moved = false;
+            return;
+          }
+
+          onToggleCollapsed();
+        }}
+        aria-label={collapsed ? "Expand sidebar" : "Resize or collapse sidebar"}
+      >
         <img
-          className="h-[58px] w-[33px] mix-blend-color-dodge"
+          className={`h-[58px] w-[33px] mix-blend-color-dodge transition-transform duration-300 ${
+            collapsed ? "rotate-180" : ""
+          }`}
           alt="Resize sidebar"
           src={resizeHandleButtonSrc}
+          draggable={false}
         />
       </button>
     </div>

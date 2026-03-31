@@ -155,8 +155,11 @@ const CarouselArrow = ({
   );
 };
 
-export const SidebarCarousel = (): JSX.Element => {
+export const SidebarCarousel = ({ width = 353 }: { width?: number }): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(1);
+  const carouselScale = Math.min(1, width / 353);
+  const scaledWidth = 353 * carouselScale;
+  const scaledHeight = 111 * carouselScale;
 
   const previousIndex = useMemo(
     () => wrapIndex(activeIndex - 1, CAROUSEL_ITEMS.length),
@@ -168,28 +171,36 @@ export const SidebarCarousel = (): JSX.Element => {
   );
 
   return (
-    <div className="absolute left-8 top-[306px] h-[99px] w-[353px]">
-      <div className="absolute left-[calc(50.00%_-_170px)] top-0 h-[99px] w-[339px] rounded-[19.06px] bg-[#50505033] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
-        <div className="absolute left-[15px] top-[6px]">
-          <InactiveCard item={CAROUSEL_ITEMS[previousIndex]} />
+    <div
+      className="absolute left-1/2 top-[306px] -translate-x-1/2"
+      style={{ width: scaledWidth, height: scaledHeight }}
+    >
+      <div
+        className="absolute left-0 top-0 h-[99px] w-[353px]"
+        style={{ transform: `scale(${carouselScale})`, transformOrigin: "top left" }}
+      >
+        <div className="absolute left-[calc(50.00%_-_170px)] top-0 h-[99px] w-[339px] rounded-[19.06px] bg-[#50505033] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+          <div className="absolute left-[15px] top-[6px]">
+            <InactiveCard item={CAROUSEL_ITEMS[previousIndex]} />
+          </div>
+          <div className="absolute right-[10px] top-[10px]">
+            <InactiveCard item={CAROUSEL_ITEMS[nextIndex]} />
+          </div>
+          <ActiveCard item={CAROUSEL_ITEMS[activeIndex]} />
         </div>
-        <div className="absolute right-[10px] top-[10px]">
-          <InactiveCard item={CAROUSEL_ITEMS[nextIndex]} />
-        </div>
-        <ActiveCard item={CAROUSEL_ITEMS[activeIndex]} />
-      </div>
 
-      <div className="absolute left-0 top-9">
-        <CarouselArrow
-          direction="left"
-          onClick={() => setActiveIndex((current) => wrapIndex(current - 1, CAROUSEL_ITEMS.length))}
-        />
-      </div>
-      <div className="absolute left-[338px] top-9">
-        <CarouselArrow
-          direction="right"
-          onClick={() => setActiveIndex((current) => wrapIndex(current + 1, CAROUSEL_ITEMS.length))}
-        />
+        <div className="absolute left-0 top-9">
+          <CarouselArrow
+            direction="left"
+            onClick={() => setActiveIndex((current) => wrapIndex(current - 1, CAROUSEL_ITEMS.length))}
+          />
+        </div>
+        <div className="absolute left-[338px] top-9">
+          <CarouselArrow
+            direction="right"
+            onClick={() => setActiveIndex((current) => wrapIndex(current + 1, CAROUSEL_ITEMS.length))}
+          />
+        </div>
       </div>
     </div>
   );
