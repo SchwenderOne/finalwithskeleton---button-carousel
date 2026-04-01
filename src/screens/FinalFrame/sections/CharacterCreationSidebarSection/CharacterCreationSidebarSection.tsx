@@ -5,6 +5,8 @@ type CharacterCreationSidebarSectionProps = {
   width: number;
   collapsed: boolean;
   promptText: string;
+  uploadedCharacterName: string | null;
+  onCharacterUpload: (file: File) => void;
   onPromptTextChange: (value: string) => void;
   onWidthChange: (width: number) => void;
   onToggleCollapsed: () => void;
@@ -21,12 +23,16 @@ export const CharacterCreationSidebarSection = ({
   width,
   collapsed,
   promptText,
+  uploadedCharacterName,
+  onCharacterUpload,
   onPromptTextChange,
   onWidthChange,
   onToggleCollapsed,
 }: CharacterCreationSidebarSectionProps): JSX.Element => {
   const resizeHandleButtonSrc = "https://c.animaapp.com/ViJx1BUZ/img/button-1.svg";
+  const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploadDragOver, setIsUploadDragOver] = useState(false);
   const dragStateRef = useRef({
     moved: false,
     shouldCollapse: false,
@@ -113,6 +119,14 @@ export const CharacterCreationSidebarSection = ({
 
   const effectiveWidth = collapsed ? width : width;
   const wrapperWidth = effectiveWidth + HANDLE_WIDTH - HANDLE_OVERLAP;
+  const handleUploadFiles = (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file || !file.type.startsWith("image/")) {
+      return;
+    }
+
+    onCharacterUpload(file);
+  };
 
   return (
     <div className="absolute left-7 top-[161px]" style={{ width: wrapperWidth, height: SIDEBAR_HEIGHT }}>
@@ -184,7 +198,24 @@ export const CharacterCreationSidebarSection = ({
           </div>
 
           <div className="absolute left-[127px] top-[463px] h-40 w-[163px]">
-            <div className="relative left-[-22.62%] top-[16.88%] h-[89.38%] w-[148.82%] rounded-[16.75px] border-[0.4px] border-solid border-[#ffffff4c] bg-[#84848433] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+            <button
+              className={`relative left-[-22.62%] top-[16.88%] h-[89.38%] w-[148.82%] rounded-[16.75px] border-[0.4px] border-solid border-[#ffffff4c] bg-[#84848433] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] ${
+                isUploadDragOver ? "ring-2 ring-[#226ab3]" : ""
+              }`}
+              type="button"
+              onClick={() => uploadInputRef.current?.click()}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setIsUploadDragOver(true);
+              }}
+              onDragLeave={() => setIsUploadDragOver(false)}
+              onDrop={(event) => {
+                event.preventDefault();
+                setIsUploadDragOver(false);
+                handleUploadFiles(event.dataTransfer.files);
+              }}
+              aria-label="Upload character image"
+            >
               <img
                 className="absolute left-[29px] top-[-18px] h-[127px] w-[184px]"
                 alt="Paper"
@@ -199,11 +230,22 @@ export const CharacterCreationSidebarSection = ({
 
               <div className="absolute left-5 top-[104px] flex h-[15px] w-[202px] justify-center">
                 <p className="h-[15px] w-[202px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-sm font-medium leading-[14.8px] tracking-[-0.42px] text-white">
-                  Drag and drop media below 15MB
+                  {uploadedCharacterName ?? "Drag and drop media below 15MB"}
                 </p>
               </div>
-            </div>
+            </button>
           </div>
+
+          <input
+            ref={uploadInputRef}
+            className="hidden"
+            type="file"
+            accept="image/*"
+            onChange={(event) => {
+              handleUploadFiles(event.target.files);
+              event.currentTarget.value = "";
+            }}
+          />
 
           <div className="absolute left-[21px] top-[676px] inline-flex h-[15px] items-center gap-[11px]">
             <div className="relative h-[13px] w-[43.26px]">

@@ -1,4 +1,4 @@
-import { type WheelEventHandler, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CharacterCreationSidebarSection } from "./sections/CharacterCreationSidebarSection";
 import {
   type EditorStep,
@@ -13,13 +13,14 @@ import {
 import { LeftCanvasRuler, TopCanvasRuler } from "./sections/PreviewStageSection/CanvasRulers";
 import { MainBackgroundLayer } from "./sections/PreviewStageSection/MainBackgroundLayer";
 import { BottomViewCarousel } from "./sections/PreviewStageSection/BottomViewCarousel";
+import { CanvasDotGrid } from "./sections/PreviewStageSection/CanvasDotGrid";
 
 const FRAME_WIDTH = 1720;
 const FRAME_HEIGHT = 984;
 const NOISE_BACKGROUND_URL =
   "https://c.animaapp.com/ViJx1BUZ/img/noise-texture-background-.png";
 const PREVIEW_HEIGHT = 849;
-const PREVIEW_DOT_PATTERN = "radial-gradient(circle, #dcdcdc 1.6px, transparent 1.6px)";
+const CANVAS_CONTENT_HEIGHT = 825;
 const BASE_TOP_UNITS_PER_STEP = 100;
 const BASE_LEFT_UNITS_PER_STEP = 200;
 const TOP_MAJOR_STEP_PX = 60;
@@ -35,6 +36,7 @@ const MODE_SWITCHER_MAX_WIDTH = 371;
 const MODE_SWITCHER_MIN_WIDTH = 235;
 
 export const FinalFrame = (): JSX.Element => {
+  const previewViewportRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   const [activeTopMode, setActiveTopMode] = useState<ModeType>("create");
   const [activeViewType, setActiveViewType] = useState<ViewType>("360");
@@ -43,11 +45,27 @@ export const FinalFrame = (): JSX.Element => {
   const [sidebarWidth, setSidebarWidth] = useState(SIDEBAR_DEFAULT_WIDTH);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [promptText, setPromptText] = useState("");
+  const [uploadedCharacter, setUploadedCharacter] = useState<{
+    baseHeight: number;
+    baseWidth: number;
+    centerX: number;
+    centerY: number;
+    name: string;
+    src: string;
+  } | null>(null);
   const [canvasViewport, setCanvasViewport] = useState({
     originX: 5200,
     originY: 2400,
     zoom: 1,
   });
+
+  useEffect(() => {
+    return () => {
+      if (uploadedCharacter) {
+        URL.revokeObjectURL(uploadedCharacter.src);
+      }
+    };
+  }, [uploadedCharacter]);
 
   useEffect(() => {
     const updateScale = () => {
@@ -63,30 +81,53 @@ export const FinalFrame = (): JSX.Element => {
     return () => window.removeEventListener("resize", updateScale);
   }, []);
 
-  const handlePreviewWheel: WheelEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    const previewViewport = previewViewportRef.current;
+    if (!previewViewport) {
+      return undefined;
+    }
 
-    setCanvasViewport((prev) => {
-      const hasZoomModifier = event.ctrlKey || event.metaKey;
-      if (hasZoomModifier) {
-        const nextZoom = Math.max(
-          MIN_CANVAS_ZOOM,
-          Math.min(MAX_CANVAS_ZOOM, prev.zoom * Math.exp(-event.deltaY * 0.002)),
-        );
+    const handlePreviewWheel = (event: WheelEvent) => {
+      event.preventDefault();
 
-        return { ...prev, zoom: nextZoom };
-      }
+      setCanvasViewport((prev) => {
+        const hasZoomModifier = event.ctrlKey || event.metaKey;
+        if (hasZoomModifier) {
+          const nextZoom = Math.max(
+            MIN_CANVAS_ZOOM,
+            Math.min(MAX_CANVAS_ZOOM, prev.zoom * Math.exp(-event.deltaY * 0.002)),
+          );
 
-      const topUnitsPerPixel = (BASE_TOP_UNITS_PER_STEP / TOP_MAJOR_STEP_PX) / prev.zoom;
-      const leftUnitsPerPixel = (BASE_LEFT_UNITS_PER_STEP / LEFT_MAJOR_STEP_PX) / prev.zoom;
+          return { ...prev, zoom: nextZoom };
+        }
 
-      return {
-        ...prev,
-        originX: prev.originX + event.deltaX * topUnitsPerPixel,
-        originY: prev.originY - event.deltaY * leftUnitsPerPixel,
-      };
-    });
-  };
+        const topUnitsPerPixel = (BASE_TOP_UNITS_PER_STEP / TOP_MAJOR_STEP_PX) / prev.zoom;
+        const leftUnitsPerPixel = (BASE_LEFT_UNITS_PER_STEP / LEFT_MAJOR_STEP_PX) / prev.zoom;
+
+        return {
+          ...prev,
+          originX: prev.originX + event.deltaX * topUnitsPerPixel,
+          originY: prev.originY - event.deltaY * leftUnitsPerPixel,
+        };
+      });
+    };
+
+    const preventGestureZoom = (event: Event) => {
+      event.preventDefault();
+    };
+
+    previewViewport.addEventListener("wheel", handlePreviewWheel, { passive: false });
+    previewViewport.addEventListener("gesturestart", preventGestureZoom, { passive: false });
+    previewViewport.addEventListener("gesturechange", preventGestureZoom, { passive: false });
+    previewViewport.addEventListener("gestureend", preventGestureZoom, { passive: false });
+
+    return () => {
+      previewViewport.removeEventListener("wheel", handlePreviewWheel);
+      previewViewport.removeEventListener("gesturestart", preventGestureZoom);
+      previewViewport.removeEventListener("gesturechange", preventGestureZoom);
+      previewViewport.removeEventListener("gestureend", preventGestureZoom);
+    };
+  }, []);
 
   const currentSidebarWidth = isSidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH : sidebarWidth;
   const previewLeft = SIDEBAR_LEFT + currentSidebarWidth + PREVIEW_GAP;
@@ -96,6 +137,60 @@ export const FinalFrame = (): JSX.Element => {
     MODE_SWITCHER_MIN_WIDTH,
     Math.min(MODE_SWITCHER_MAX_WIDTH, currentSidebarWidth - 47),
   );
+  const uploadedCharacterScreenPosition = uploadedCharacter
+    ? {
+        height: uploadedCharacter.baseHeight * canvasViewport.zoom,
+        left:
+          ((uploadedCharacter.centerX - canvasViewport.originX) * TOP_MAJOR_STEP_PX * canvasViewport.zoom) /
+          BASE_TOP_UNITS_PER_STEP,
+        top:
+          ((canvasViewport.originY - uploadedCharacter.centerY) * LEFT_MAJOR_STEP_PX * canvasViewport.zoom) /
+          BASE_LEFT_UNITS_PER_STEP,
+        width: uploadedCharacter.baseWidth * canvasViewport.zoom,
+      }
+    : null;
+
+  const handleCharacterUpload = (file: File) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      const visibleWorldWidth =
+        (previewInnerWidth * BASE_TOP_UNITS_PER_STEP) / (TOP_MAJOR_STEP_PX * canvasViewport.zoom);
+      const visibleWorldHeight =
+        (CANVAS_CONTENT_HEIGHT * BASE_LEFT_UNITS_PER_STEP) / (LEFT_MAJOR_STEP_PX * canvasViewport.zoom);
+      const maxBaseWidth = Math.min(previewInnerWidth * 0.36, 320);
+      const maxBaseHeight = CANVAS_CONTENT_HEIGHT * 0.52;
+      let baseWidth = maxBaseWidth;
+      let baseHeight = (image.naturalHeight / image.naturalWidth) * baseWidth;
+
+      if (baseHeight > maxBaseHeight) {
+        baseHeight = maxBaseHeight;
+        baseWidth = (image.naturalWidth / image.naturalHeight) * baseHeight;
+      }
+
+      setUploadedCharacter((current) => {
+        if (current) {
+          URL.revokeObjectURL(current.src);
+        }
+
+        return {
+          baseHeight,
+          baseWidth,
+          centerX: canvasViewport.originX + visibleWorldWidth / 2,
+          centerY: canvasViewport.originY - visibleWorldHeight / 2,
+          name: file.name,
+          src: objectUrl,
+        };
+      });
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+
+    image.src = objectUrl;
+  };
 
   return (
     <div className="relative flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-[#000103]">
@@ -130,7 +225,9 @@ export const FinalFrame = (): JSX.Element => {
           <CharacterCreationSidebarSection
             width={currentSidebarWidth}
             collapsed={isSidebarCollapsed}
+            uploadedCharacterName={uploadedCharacter?.name ?? null}
             promptText={promptText}
+            onCharacterUpload={handleCharacterUpload}
             onPromptTextChange={setPromptText}
             onWidthChange={setSidebarWidth}
             onToggleCollapsed={() => setIsSidebarCollapsed((current) => !current)}
@@ -149,9 +246,9 @@ export const FinalFrame = (): JSX.Element => {
             style={{ left: previewLeft, width: previewWidth }}
           >
             <div
+              ref={previewViewportRef}
               className="relative h-[849px] overflow-hidden rounded-xl shadow-[4px_4px_4px_#00000040]"
               style={{ width: previewWidth }}
-              onWheel={handlePreviewWheel}
             >
               <div className="absolute top-0 left-0 h-6" style={{ width: previewWidth }}>
                 <TopCanvasRuler
@@ -173,10 +270,30 @@ export const FinalFrame = (): JSX.Element => {
                 className="absolute top-6 left-[23px] h-[825px] rounded-[2px] border border-[#d8d8d8] bg-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.38)]"
                 style={{
                   width: previewInnerWidth,
-                  backgroundImage: PREVIEW_DOT_PATTERN,
-                  backgroundSize: "32px 32px",
                 }}
               >
+                <CanvasDotGrid
+                  width={previewInnerWidth}
+                  height={CANVAS_CONTENT_HEIGHT}
+                  zoom={canvasViewport.zoom}
+                  originX={canvasViewport.originX}
+                  originY={canvasViewport.originY}
+                />
+                {uploadedCharacterScreenPosition ? (
+                  <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    <img
+                      className="absolute -translate-x-1/2 -translate-y-1/2 object-contain drop-shadow-[0px_18px_28px_rgba(0,0,0,0.22)]"
+                      alt={uploadedCharacter?.name ?? "Uploaded character"}
+                      src={uploadedCharacter?.src}
+                      style={{
+                        left: uploadedCharacterScreenPosition.left,
+                        top: uploadedCharacterScreenPosition.top,
+                        width: uploadedCharacterScreenPosition.width,
+                        height: uploadedCharacterScreenPosition.height,
+                      }}
+                    />
+                  </div>
+                ) : null}
                 {activeViewType === "grid" ? (
                   <BottomViewCarousel availableWidth={previewInnerWidth - 24} />
                 ) : null}
