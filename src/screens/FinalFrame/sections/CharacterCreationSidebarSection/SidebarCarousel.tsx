@@ -28,6 +28,9 @@ const CAROUSEL_ITEMS: CarouselItem[] = [
   },
 ];
 
+const CAROUSEL_ARROW_ICON_SRC =
+  "https://www.figma.com/api/mcp/asset/5acb6f4c-d8ea-47ee-8d61-684a274689f1";
+
 const wrapIndex = (value: number, length: number): number => {
   if (value < 0) {
     return length - 1;
@@ -134,21 +137,21 @@ const CarouselArrow = ({
 }): JSX.Element => {
   return (
     <button
-      className="relative h-[26px] w-[15px] rounded-[7px] border border-[rgba(220,220,220,0.8)] bg-[#0f0f0f] mix-blend-color-dodge"
+      className="relative flex h-[26px] w-[15px] items-center justify-center overflow-hidden rounded-[15px] border-[0.5px] border-white bg-transparent"
       type="button"
       onClick={onClick}
       aria-label={direction === "left" ? "Previous card" : "Next card"}
     >
-      <span className="absolute inset-0 rounded-[7px] bg-[rgba(0,0,0,0.01)]" />
+      <span className="absolute inset-0 rounded-[15px] bg-[rgba(255,255,255,0.01)]" />
       <svg
-        className="absolute left-1/2 top-1/2 h-[8.1px] w-[4.9px] -translate-x-1/2 -translate-y-1/2"
+        className={`relative z-10 h-[8.073px] w-[4.875px] ${direction === "left" ? "" : "rotate-180"}`}
         viewBox="0 0 5 9"
         fill="none"
+        aria-hidden="true"
       >
         <path
           d="M0.24 3.52C0.08 3.68 0 3.84 0 4.03C0 4.23 0.08 4.39 0.24 4.55L3.77 7.89C3.9 8.01 4.05 8.07 4.22 8.07C4.58 8.07 4.88 7.79 4.88 7.44C4.88 7.27 4.8 7.11 4.67 6.98L1.53 4.04L4.67 1.09C4.81 0.96 4.88 0.8 4.88 0.63C4.88 0.28 4.58 0 4.22 0C4.04 0 3.89 0.06 3.77 0.18L0.24 3.52Z"
-          fill="#999999"
-          transform={direction === "left" ? undefined : "translate(5 9) rotate(180)"}
+          fill="white"
         />
       </svg>
     </button>

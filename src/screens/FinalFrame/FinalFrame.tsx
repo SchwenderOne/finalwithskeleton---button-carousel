@@ -7,10 +7,12 @@ import {
 import {
   type ModeType,
   TopModeSwitcher,
+  type ViewType,
   ViewTypeToggle,
 } from "./sections/PreviewStageSection/ControlGroups";
 import { LeftCanvasRuler, TopCanvasRuler } from "./sections/PreviewStageSection/CanvasRulers";
 import { MainBackgroundLayer } from "./sections/PreviewStageSection/MainBackgroundLayer";
+import { BottomViewCarousel } from "./sections/PreviewStageSection/BottomViewCarousel";
 
 const FRAME_WIDTH = 1720;
 const FRAME_HEIGHT = 984;
@@ -35,6 +37,7 @@ const MODE_SWITCHER_MIN_WIDTH = 235;
 export const FinalFrame = (): JSX.Element => {
   const [scale, setScale] = useState(1);
   const [activeTopMode, setActiveTopMode] = useState<ModeType>("create");
+  const [activeViewType, setActiveViewType] = useState<ViewType>("360");
   const [projectName, setProjectName] = useState("Caesar 1");
   const [activeEditorStep, setActiveEditorStep] = useState<EditorStep>("start");
   const [sidebarWidth, setSidebarWidth] = useState(SIDEBAR_DEFAULT_WIDTH);
@@ -173,10 +176,14 @@ export const FinalFrame = (): JSX.Element => {
                   backgroundImage: PREVIEW_DOT_PATTERN,
                   backgroundSize: "32px 32px",
                 }}
-              />
+              >
+                {activeViewType === "grid" ? (
+                  <BottomViewCarousel availableWidth={previewInnerWidth - 24} />
+                ) : null}
+              </div>
 
               <div className="absolute left-[calc(50.00%_-_96px)] top-[43px]">
-                <ViewTypeToggle view="360" />
+                <ViewTypeToggle view={activeViewType} onViewChange={setActiveViewType} />
               </div>
             </div>
           </div>

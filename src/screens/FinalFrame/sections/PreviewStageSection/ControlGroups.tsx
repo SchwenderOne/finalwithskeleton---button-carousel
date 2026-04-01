@@ -1,5 +1,5 @@
 export type ModeType = "variation" | "create" | "edit";
-type ViewType = "360" | "grid" | "shield" | "skeleton";
+export type ViewType = "360" | "grid" | "shield" | "skeleton";
 
 type TopModeSwitcherProps = {
   mode: ModeType;
@@ -8,7 +8,8 @@ type TopModeSwitcherProps = {
 };
 
 type ViewTypeToggleProps = {
-  view?: ViewType;
+  view: ViewType;
+  onViewChange: (view: ViewType) => void;
 };
 
 const VariationIcon = (): JSX.Element => {
@@ -152,34 +153,69 @@ export const TopModeSwitcher = ({
   );
 };
 
-export const ViewTypeToggle = ({ view = "360" }: ViewTypeToggleProps): JSX.Element => {
+const viewIndicatorLeft: Record<ViewType, string> = {
+  "360": "1px",
+  grid: "63px",
+  shield: "111px",
+  skeleton: "149px",
+};
+
+const viewIndicatorWidth: Record<ViewType, string> = {
+  "360": "67px",
+  grid: "45px",
+  shield: "41px",
+  skeleton: "43px",
+};
+
+export const ViewTypeToggle = ({ view, onViewChange }: ViewTypeToggleProps): JSX.Element => {
   return (
-    <div className="h-[33px] w-[193px] rounded-[19.06px] bg-[#11111152] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
-      <div className="absolute left-px top-px h-[31px] w-[67px] rounded-[58.27px] bg-[#8a8a8a] backdrop-blur-[29.5px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(29.5px)_brightness(100.0%)_saturate(100.0%)]" />
+    <div className="relative h-[33px] w-[193px] rounded-[19.06px] bg-[#11111152] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+      <div
+        className="absolute top-px h-[31px] rounded-[58.27px] bg-[#8a8a8a] shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.1)] backdrop-blur-[29.5px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] transition-[left,width] duration-200 [-webkit-backdrop-filter:blur(29.5px)_brightness(100.0%)_saturate(100.0%)]"
+        style={{ left: viewIndicatorLeft[view], width: viewIndicatorWidth[view] }}
+      />
       <div className="absolute left-[15px] top-[3px] inline-flex items-center gap-6">
-        <button className="all-[unset] box-border relative h-[21px] w-9">
+        <button
+          className="all-[unset] box-border relative h-[21px] w-9 cursor-pointer"
+          type="button"
+          onClick={() => onViewChange("360")}
+          aria-pressed={view === "360"}
+          aria-label="360 degree view"
+        >
           <div className="absolute left-[calc(50.00%_-_19px)] top-[calc(50.00%_-_10px)] flex h-[21px] w-[38px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-[15px] font-medium leading-[15.9px] tracking-[-0.15px] text-white">
             360°
           </div>
         </button>
         <button
-          className={`all-[unset] box-border relative h-[22.4px] w-[22.4px] ${
+          className={`all-[unset] box-border relative h-[22.4px] w-[22.4px] cursor-pointer ${
             view === "grid" ? "opacity-100" : "opacity-[0.9]"
           }`}
+          type="button"
+          onClick={() => onViewChange("grid")}
+          aria-pressed={view === "grid"}
+          aria-label="Grid view"
         >
           <GridIcon />
         </button>
         <button
-          className={`all-[unset] box-border relative h-[23.5px] w-[19.5px] ${
+          className={`all-[unset] box-border relative h-[23.5px] w-[19.5px] cursor-pointer ${
             view === "shield" ? "opacity-100" : "opacity-[0.9]"
           }`}
+          type="button"
+          onClick={() => onViewChange("shield")}
+          aria-pressed={view === "shield"}
+          aria-label="Shield view"
         >
           <ShieldIcon />
         </button>
         <button
-          className={`all-[unset] box-border relative h-[27px] w-[15.55px] ${
+          className={`all-[unset] box-border relative h-[27px] w-[15.55px] cursor-pointer ${
             view === "skeleton" ? "opacity-100" : "opacity-[0.9]"
           }`}
+          type="button"
+          onClick={() => onViewChange("skeleton")}
+          aria-pressed={view === "skeleton"}
+          aria-label="Skeleton view"
         >
           <SkeletonIcon />
         </button>
