@@ -251,17 +251,19 @@ export const FinalFrame = (): JSX.Element => {
             onToggleCollapsed={() => setIsSidebarCollapsed((current) => !current)}
           />
 
-          <div
-            className="absolute top-28 transition-[left,width] duration-300 ease-out"
-            style={{ left: modeSwitcherLeft }}
-          >
-            <TopModeSwitcher
-              mode={activeTopMode}
-              onModeChange={setActiveTopMode}
-              collapsed={isSidebarCollapsed}
-              width={modeSwitcherWidth}
-            />
-          </div>
+          {!isSidebarCollapsed ? (
+            <div
+              className="absolute top-28 transition-[left,width] duration-300 ease-out"
+              style={{ left: modeSwitcherLeft }}
+            >
+              <TopModeSwitcher
+                mode={activeTopMode}
+                onModeChange={setActiveTopMode}
+                collapsed={isSidebarCollapsed}
+                width={modeSwitcherWidth}
+              />
+            </div>
+          ) : null}
 
           <div
             className="absolute top-[116px] flex h-[849px] transition-[left,width] duration-300 ease-out"
