@@ -99,29 +99,64 @@ const SkeletonIcon = (): JSX.Element => {
 const buttonBaseClasses =
   "all-[unset] box-border inline-flex h-[31px] min-w-0 items-center justify-center gap-[6px] rounded-[35.75px] px-3 transition-[background-color,color,border-color,box-shadow] duration-200";
 
+const modeIndicatorLeft: Record<ModeType, string> = {
+  variation: "0.5px",
+  create: "129px",
+  edit: "266.5px",
+};
+
+const modeIndicatorWidth: Record<ModeType, string> = {
+  variation: "135px",
+  create: "129px",
+  edit: "105px",
+};
+
 export const TopModeSwitcher = ({
   mode,
   onModeChange,
   collapsed = false,
   width = 371,
 }: TopModeSwitcherProps): JSX.Element => {
-  const activeClasses =
-    "border-[0.4px] border-solid border-[#ffffff4c] bg-[#85848433] text-white shadow-[0px_4px_4px_#00000040,inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]";
-  const inactiveClasses = "border-[0.4px] border-transparent text-[#464545]";
   const containerWidth = collapsed ? 37 : width;
   const containerHeight = collapsed ? 107 : 33;
   const collapsedButtonClasses = "h-[31px] w-[31px] shrink-0 px-0";
+  const collapsedActiveClasses =
+    "border-[0.4px] border-solid border-[#ffffff4c] bg-[#85848433] text-white shadow-[0px_4px_4px_#00000040,inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]";
+  const collapsedInactiveClasses = "border-[0.4px] border-transparent text-[#474646]";
 
   return (
     <div
-      className="h-[33px] rounded-[19.06px] border-[0.5px] border-solid border-white bg-[#c3c2c280] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]"
+      className="relative h-[33px] rounded-[19.06px] border-[0.5px] border-solid border-white bg-[#c3c2c280] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]"
       style={{ width: containerWidth, height: containerHeight }}
     >
-      <div className={`flex h-full px-[3px] ${collapsed ? "flex-col items-center gap-[4px] py-[3px]" : "items-center gap-[4px]"}`}>
+      {!collapsed ? (
+        <>
+          <div
+            className="pointer-events-none absolute z-0 h-[39px] rounded-[35.747px] bg-[rgba(133,132,132,0.3)] transition-[left,width] duration-200"
+            style={{ left: modeIndicatorLeft[mode], top: "-4px", width: modeIndicatorWidth[mode] }}
+          />
+          <div
+            className="pointer-events-none absolute z-[1] h-[39px] rounded-[35.747px] border-[0.397px] border-solid border-[rgba(255,255,255,0.3)] bg-[rgba(133,132,132,0.2)] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] backdrop-blur-[12px] backdrop-saturate-[108%] transition-[left,width] duration-200 [-webkit-backdrop-filter:blur(12px)_saturate(108%)]"
+            style={{ left: modeIndicatorLeft[mode], top: "-4px", width: modeIndicatorWidth[mode] }}
+          >
+            <span className="pointer-events-none absolute inset-0 rounded-[35.747px] bg-[linear-gradient(180deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.04)_48%,rgba(0,0,0,0.08)_100%)]" />
+          </div>
+        </>
+      ) : null}
+
+      <div className={`relative z-10 flex h-full ${collapsed ? "flex-col items-center gap-[4px] px-[3px] py-[3px]" : "items-center gap-[16px] px-[23px]"}`}>
         <button
           className={`${buttonBaseClasses} ${
-            collapsed ? collapsedButtonClasses : "flex-[1.04]"
-          } ${mode === "variation" ? `${activeClasses} ${collapsed ? "" : "px-4"}` : inactiveClasses}`}
+            collapsed ? collapsedButtonClasses : "h-[31px] w-[90px] shrink-0 gap-[3px] px-0"
+          } ${
+            collapsed
+              ? mode === "variation"
+                ? collapsedActiveClasses
+                : collapsedInactiveClasses
+              : mode === "variation"
+                ? "text-white"
+                : "text-[#474646]"
+          }`}
           type="button"
           onClick={() => onModeChange("variation")}
           aria-pressed={mode === "variation"}
@@ -136,8 +171,16 @@ export const TopModeSwitcher = ({
 
         <button
           className={`${buttonBaseClasses} ${
-            collapsed ? collapsedButtonClasses : "flex-[1.02]"
-          } ${mode === "create" ? activeClasses : inactiveClasses}`}
+            collapsed ? collapsedButtonClasses : "h-[31px] w-[129px] shrink-0 gap-[5px] px-0"
+          } ${
+            collapsed
+              ? mode === "create"
+                ? collapsedActiveClasses
+                : collapsedInactiveClasses
+              : mode === "create"
+                ? "text-white"
+                : "text-[#474646]"
+          }`}
           type="button"
           onClick={() => onModeChange("create")}
           aria-pressed={mode === "create"}
@@ -152,8 +195,16 @@ export const TopModeSwitcher = ({
 
         <button
           className={`${buttonBaseClasses} ${
-            collapsed ? collapsedButtonClasses : "flex-[0.79]"
-          } ${mode === "edit" ? `${activeClasses} ${collapsed ? "" : "px-4"}` : inactiveClasses}`}
+            collapsed ? collapsedButtonClasses : "h-[31px] w-[90px] shrink-0 gap-[3px] px-0"
+          } ${
+            collapsed
+              ? mode === "edit"
+                ? collapsedActiveClasses
+                : collapsedInactiveClasses
+              : mode === "edit"
+                ? "text-white"
+                : "text-[#474646]"
+          }`}
           type="button"
           onClick={() => onModeChange("edit")}
           aria-pressed={mode === "edit"}
