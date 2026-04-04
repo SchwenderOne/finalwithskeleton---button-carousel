@@ -19,6 +19,7 @@ const SIDEBAR_HEIGHT = 799;
 const MIN_SIDEBAR_WIDTH = 360;
 const MAX_SIDEBAR_WIDTH = 520;
 const AUTO_COLLAPSE_THRESHOLD = MIN_SIDEBAR_WIDTH - 28;
+const CREATE_BUTTON_WIDTH = 154;
 
 const CollapsedResizeSidebarHandleIcon = (): JSX.Element => (
   <div className="relative h-[54.875px] w-[27px]">
@@ -173,7 +174,6 @@ export const CharacterCreationSidebarSection = ({
   const effectiveWidth = collapsed ? width : width;
   const wrapperWidth = effectiveWidth + HANDLE_WIDTH - HANDLE_OVERLAP;
   const handleLeft = collapsed ? COLLAPSED_HANDLE_LEFT_OFFSET : effectiveWidth - HANDLE_OVERLAP;
-  const createButtonWidth = Math.max(120, effectiveWidth - 264);
   const centerLeft = (itemWidth: number) => Math.max(0, (effectiveWidth - itemWidth) / 2);
   const handleUploadFiles = (files: FileList | null) => {
     const file = files?.[0];
@@ -327,11 +327,11 @@ export const CharacterCreationSidebarSection = ({
           </div>
 
           <button
-            className="all-[unset] box-border absolute top-[calc(50.00%_+_318px)] flex flex-col items-start gap-2.5 rounded-[27.87px] border-[0.4px] border-solid border-[#0004ff4c] bg-[#50505033] px-[25px] py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]"
-            style={{ left: centerLeft(createButtonWidth), width: createButtonWidth }}
+            className="all-[unset] box-border absolute top-[calc(50.00%_+_318px)] isolate flex flex-col items-start rounded-[27.87px] border-[0.4px] border-solid border-transparent bg-[#50505033] px-[25px] py-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] [mix-blend-mode:normal]"
+            style={{ left: centerLeft(CREATE_BUTTON_WIDTH), width: CREATE_BUTTON_WIDTH }}
           >
             <div className="relative h-[31px] w-full self-stretch">
-              <div className="absolute left-[calc(50.00%_-_52px)] top-[calc(50.00%_-_16px)] flex h-[31px] w-[104px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-2xl font-medium leading-[25.4px] tracking-[-0.72px] text-[#226ab3]">
+              <div className="absolute left-[calc(50.00%_-_52px)] top-[calc(50.00%_-_16px)] flex h-[31px] w-[104px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-2xl font-medium leading-[25.44px] tracking-[-0.72px] text-[#226ab3]">
                 Create
               </div>
             </div>
