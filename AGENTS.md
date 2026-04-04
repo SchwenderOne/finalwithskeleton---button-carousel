@@ -6,6 +6,10 @@
 - Stack: React 18 + Vite + TypeScript
 - Styling: Tailwind utility classes embedded directly in TSX
 - Liquid glass rendering for key controls now uses `liquid-glass-react` (not only handcrafted blur/shadow layers)
+- `liquid-glass-react` is now vendored locally and resolved through Vite alias:
+  - source: `src/vendor/liquid-glass-react/`
+  - alias config: `vite.config.ts` (`"liquid-glass-react" -> src/vendor/liquid-glass-react/index.tsx`)
+- The vendored glass implementation includes a resize measurement patch using `offsetWidth/offsetHeight` (fallback to `getBoundingClientRect`) to avoid border-size drift when the screen uses CSS transform scaling.
 - This codebase is an Anima-exported screen that is being refined manually rather than fully re-architected
 
 ## Start Here
@@ -46,6 +50,9 @@
   - vertical stack
   - `37x107` container
   - centerline aligned to the collapsed resize handle.
+- Non-collapsed mode switcher selection indicator is a moving fixed pill in `ControlGroups.tsx`:
+  - per-mode tuned width/left values are intentional for Figma matching
+  - keep text/icon slot positions stable when switching between variation/create/edit.
 
 ## Navbar Notes
 
@@ -120,6 +127,8 @@
 
 - `src/screens/FinalFrame/FinalFrame.tsx`
   - contains frame scaling logic plus collapsed-mode spacing/alignment rules for preview and top mode switcher
+- `src/screens/FinalFrame/sections/PreviewStageSection/ControlGroups.tsx`
+  - contains tuned mode-switcher indicator widths/offsets and fixed slot geometry; small value changes can break centering/text alignment.
 - `src/screens/FinalFrame/sections/EditorStepNavigationSection/EditorStepNavigationSection.tsx`
   - small spacing or radius changes are immediately visible
 - `src/screens/FinalFrame/sections/PreviewStageSection/MainBackgroundLayer.tsx`
@@ -134,6 +143,10 @@
   - contains edit-mode selection geometry (left focus toggle + person/shield selector) where 1-2px offsets are visibly wrong
 - `src/screens/FinalFrame/sections/CharacterCreationSidebarSection/SidebarCarousel.tsx`
   - arrow button liquid-glass overlays and border rings are sensitive to tiny centering/opacity changes
+- `vite.config.ts`
+  - owns alias mapping to the vendored liquid-glass implementation; changing/removing alias can reintroduce build/runtime instability.
+- `src/vendor/liquid-glass-react/index.tsx`
+  - local patched dependency source; update carefully and preserve the resize measurement fix unless intentionally superseded.
 
 ## Recommended Session Workflow
 
