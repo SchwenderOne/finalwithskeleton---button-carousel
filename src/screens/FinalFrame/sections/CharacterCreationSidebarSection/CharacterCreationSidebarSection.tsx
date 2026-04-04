@@ -554,7 +554,7 @@ export const CharacterCreationSidebarSection = ({
             style={{ left: centerLeft(CREATE_BUTTON_WIDTH), width: CREATE_BUTTON_WIDTH }}
           >
             <div className="relative h-[31px] w-full self-stretch">
-              <div className="absolute left-[calc(50.00%_-_52px)] top-[calc(50.00%_-_16px)] flex h-[31px] w-[104px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-2xl font-medium leading-[25.44px] tracking-[-0.72px] text-[#226ab3]">
+              <div className="absolute left-[calc(50.00%_-_52px)] top-[calc(50.00%_-_16px)] flex h-[31px] w-[104px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-2xl font-medium leading-[25.44px] tracking-[-0.72px] text-white">
                 Create
               </div>
             </div>

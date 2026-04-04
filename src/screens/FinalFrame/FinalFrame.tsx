@@ -14,6 +14,7 @@ import { LeftCanvasRuler, TopCanvasRuler } from "./sections/PreviewStageSection/
 import { MainBackgroundLayer } from "./sections/PreviewStageSection/MainBackgroundLayer";
 import { BottomViewCarousel } from "./sections/PreviewStageSection/BottomViewCarousel";
 import { CanvasDotGrid } from "./sections/PreviewStageSection/CanvasDotGrid";
+import { ContinueCanvasButton } from "./sections/PreviewStageSection/ContinueCanvasButton";
 import noiseTextureBackground from "../../assets/noise-texture-background.png";
 
 const FRAME_WIDTH = 1720;
@@ -322,6 +323,13 @@ export const FinalFrame = (): JSX.Element => {
 
               <div className="absolute left-[calc(50.00%_-_96px)] top-[43px]">
                 <ViewTypeToggle view={activeViewType} onViewChange={setActiveViewType} />
+              </div>
+
+              <div
+                className="absolute bottom-[22px] right-[19px] z-20"
+                style={{ transform: "scale(1.2)", transformOrigin: "bottom right" }}
+              >
+                <ContinueCanvasButton />
               </div>
             </div>
           </div>
