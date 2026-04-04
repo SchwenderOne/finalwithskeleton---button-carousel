@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import LiquidGlass from "liquid-glass-react";
 
 type CarouselItem = {
   createdAt: string;
@@ -27,9 +28,6 @@ const CAROUSEL_ITEMS: CarouselItem[] = [
     imageSrc: "https://c.animaapp.com/ViJx1BUZ/img/frame-2111@2x.png",
   },
 ];
-
-const CAROUSEL_ARROW_ICON_SRC =
-  "https://www.figma.com/api/mcp/asset/5acb6f4c-d8ea-47ee-8d61-684a274689f1";
 
 const wrapIndex = (value: number, length: number): number => {
   if (value < 0) {
@@ -108,7 +106,7 @@ const InactiveCard = ({ item }: { item: CarouselItem }): JSX.Element => {
 const ActiveCard = ({ item }: { item: CarouselItem }): JSX.Element => {
   return (
     <div className="absolute left-[calc(50%_-_64px)] top-[-7px] flex h-[111px] w-[127px] rounded-[35.75px] border-[0.4px] border-solid border-[#ffffff4c] bg-[#84848433] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
-      <div className="relative ml-[12.7px] mt-[10.3px] h-[90.49px] w-[100.98px] rounded-[10px] border border-[rgba(255,255,255,0.2)] bg-[rgba(132,132,132,0.2)]">
+      <div className="relative ml-[12.7px] mt-[10.3px] h-[90.49px] w-[100.98px] rounded-[10px] border border-[rgba(255,255,255,0.5)] bg-[rgba(132,132,132,0.2)]">
         <div className="absolute left-1 top-[5px] h-[61px] w-[93px] overflow-hidden rounded-[4px]">
           <img className="h-full w-full object-cover" alt={item.title} src={item.imageSrc} />
         </div>
@@ -137,23 +135,46 @@ const CarouselArrow = ({
 }): JSX.Element => {
   return (
     <button
-      className="relative flex h-[26px] w-[15px] items-center justify-center overflow-hidden rounded-[15px] border-[0.5px] border-white bg-transparent"
+      className="relative flex h-[26px] w-[15px] items-center justify-center bg-transparent p-0"
       type="button"
       onClick={onClick}
       aria-label={direction === "left" ? "Previous card" : "Next card"}
     >
-      <span className="absolute inset-0 rounded-[15px] bg-[rgba(255,255,255,0.01)]" />
-      <svg
-        className={`relative z-10 h-[8.073px] w-[4.875px] ${direction === "left" ? "" : "rotate-180"}`}
-        viewBox="0 0 5 9"
-        fill="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M0.24 3.52C0.08 3.68 0 3.84 0 4.03C0 4.23 0.08 4.39 0.24 4.55L3.77 7.89C3.9 8.01 4.05 8.07 4.22 8.07C4.58 8.07 4.88 7.79 4.88 7.44C4.88 7.27 4.8 7.11 4.67 6.98L1.53 4.04L4.67 1.09C4.81 0.96 4.88 0.8 4.88 0.63C4.88 0.28 4.58 0 4.22 0C4.04 0 3.89 0.06 3.77 0.18L0.24 3.52Z"
-          fill="white"
-        />
-      </svg>
+      <div className="pointer-events-none relative h-[26px] w-[15px] rounded-[15px]">
+        <div className="absolute inset-[0.72px] overflow-hidden rounded-[14px] [clip-path:inset(0_round_14px)]">
+          <LiquidGlass
+            className="h-[24.56px] w-[13.56px] overflow-hidden rounded-[14px]"
+            style={{ position: "absolute", top: "50%", left: "50%" }}
+            mode="shader"
+            displacementScale={18}
+            blurAmount={0.035}
+            saturation={132}
+            aberrationIntensity={1.2}
+            elasticity={0}
+            cornerRadius={14}
+            padding="0px"
+          >
+            <div className="relative flex h-[24.56px] w-[13.56px] items-center justify-center overflow-hidden rounded-[14px] border-[0.4px] border-solid border-[rgba(130,130,130,0.18)] bg-[rgba(255,255,255,0.22)]">
+              <div className="pointer-events-none absolute inset-0 rounded-[14px] bg-[rgba(255,255,255,0.5)]" />
+              <div className="pointer-events-none absolute inset-0 rounded-[14px] bg-[radial-gradient(120%_90%_at_20%_10%,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0)_68%)]" />
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                <svg
+                  className={`h-[8.073px] w-[4.875px] ${direction === "left" ? "" : "rotate-180"}`}
+                  viewBox="0 0 5 9"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M0.24 3.52C0.08 3.68 0 3.84 0 4.03C0 4.23 0.08 4.39 0.24 4.55L3.77 7.89C3.9 8.01 4.05 8.07 4.22 8.07C4.58 8.07 4.88 7.79 4.88 7.44C4.88 7.27 4.8 7.11 4.67 6.98L1.53 4.04L4.67 1.09C4.81 0.96 4.88 0.8 4.88 0.63C4.88 0.28 4.58 0 4.22 0C4.04 0 3.89 0.06 3.77 0.18L0.24 3.52Z"
+                    fill="#999999"
+                  />
+                </svg>
+              </div>
+            </div>
+          </LiquidGlass>
+        </div>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[27.4px] w-[16.4px] -translate-x-1/2 -translate-y-1/2 rounded-[15.8px] border-[1.2px] border-[rgba(220,220,220,0.8)]" />
+      </div>
     </button>
   );
 };

@@ -14,11 +14,11 @@ import { LeftCanvasRuler, TopCanvasRuler } from "./sections/PreviewStageSection/
 import { MainBackgroundLayer } from "./sections/PreviewStageSection/MainBackgroundLayer";
 import { BottomViewCarousel } from "./sections/PreviewStageSection/BottomViewCarousel";
 import { CanvasDotGrid } from "./sections/PreviewStageSection/CanvasDotGrid";
+import noiseTextureBackground from "../../assets/noise-texture-background.png";
 
 const FRAME_WIDTH = 1720;
 const FRAME_HEIGHT = 984;
-const NOISE_BACKGROUND_URL =
-  "https://c.animaapp.com/ViJx1BUZ/img/noise-texture-background-.png";
+const NOISE_BACKGROUND_URL = noiseTextureBackground;
 const PREVIEW_HEIGHT = 849;
 const CANVAS_CONTENT_HEIGHT = 825;
 const BASE_TOP_UNITS_PER_STEP = 100;

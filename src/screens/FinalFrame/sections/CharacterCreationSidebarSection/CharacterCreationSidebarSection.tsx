@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import LiquidGlass from "liquid-glass-react";
 import type { ModeType } from "../PreviewStageSection/ControlGroups";
 import { SidebarCarousel } from "./SidebarCarousel";
 
@@ -66,6 +67,49 @@ const CollapsedResizeSidebarHandleIcon = (): JSX.Element => (
   </div>
 );
 
+const ExpandedResizeSidebarHandleIcon = (): JSX.Element => (
+  <div className="relative h-[58px] w-[33px]">
+    <div className="absolute left-1/2 top-1/2 h-[54.875px] w-[27px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[15px] [clip-path:inset(0_round_15px)]">
+      <LiquidGlass
+        className="h-[54.875px] w-[27px] overflow-hidden rounded-[15px]"
+        style={{ position: "absolute", top: "50%", left: "50%" }}
+        mode="shader"
+        displacementScale={20}
+        blurAmount={0.035}
+        saturation={132}
+        aberrationIntensity={1.2}
+        elasticity={0}
+        cornerRadius={15}
+        padding="0px"
+      >
+        <div className="relative flex h-[54.875px] w-[27px] items-center justify-center overflow-hidden rounded-[15px] border-[0.5px] border-[rgba(130,130,130,0.18)] bg-[rgba(255,255,255,0.22)]">
+          <div className="pointer-events-none absolute inset-0 rounded-[15px] bg-[rgba(255,255,255,0.5)]" />
+          <div className="pointer-events-none absolute inset-0 rounded-[15px] bg-[radial-gradient(120%_90%_at_20%_10%,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0)_68%)]" />
+          <div
+            className="absolute left-1/2 top-1/2 h-[11.226px] w-[18.176px]"
+            style={{ transform: "translate(-50%, -50%) rotate(-90deg)" }}
+          >
+            <svg
+              className="block h-full w-full max-w-none"
+              preserveAspectRatio="none"
+              viewBox="0 0 18.1755 10.125"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M0.403902 7.83703C0.141169 8.09331 0 8.40534 0 8.76932C0 9.51958 0.631341 10.125 1.41562 10.125C1.80775 10.125 2.17636 9.97644 2.45478 9.69415L9.08977 3.17902L15.7208 9.69415C16.0032 9.98017 16.3756 10.125 16.7599 10.125C17.5403 10.125 18.1755 9.51958 18.1755 8.76932C18.1755 8.39788 18.0422 8.08965 17.7677 7.83703L10.2505 0.501423C9.90146 0.167141 9.53678 0.00742849 9.08977 0C8.65056 0 8.28194 0.159713 7.92902 0.501423L0.403902 7.83703Z"
+                fill="#999999"
+              />
+            </svg>
+          </div>
+        </div>
+      </LiquidGlass>
+    </div>
+    <div className="pointer-events-none absolute left-1/2 top-1/2 h-[56.48px] w-[28.6px] -translate-x-1/2 -translate-y-1/2 rounded-[15.8px] border-[1.8px] border-[rgba(220,220,220,0.8)]" />
+  </div>
+);
+
 const ActiveButtonGlass = ({
   className,
   roundedClass = "rounded-[20px]",
@@ -94,6 +138,15 @@ const EditPersonIcon = ({ className }: { className: string }): JSX.Element => (
   </svg>
 );
 
+const UploadCloudIcon = (): JSX.Element => (
+  <svg viewBox="0 0 34 25" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path
+      d="M19.6211 0C25.1668 0 29.4577 4.10591 29.4375 9.78906C32.064 10.8119 33.627 13.2287 33.627 15.9014C33.6269 19.5581 30.3298 22.4765 26.1758 22.4766L8.18262 22.4717C3.55967 22.4717 0.000178712 19.2592 0 15.3467C0 12.1771 1.86081 9.59593 4.85547 9.05078C5.03696 5.52903 8.47964 3.15552 11.8574 3.9707C13.5462 1.62133 16.2132 0.000153006 19.6211 0ZM19.5859 2.85645C16.4806 2.85656 14.6252 4.45319 13.3145 6.62891C13.2237 6.77346 13.1125 6.80701 12.9463 6.75879C10.0123 5.88583 7.33557 7.3187 7.50684 10.8691C7.51691 11.0524 7.42579 11.1543 7.23926 11.1543C4.67837 11.1545 3.04004 12.8719 3.04004 15.3467C3.04023 17.6719 5.24842 19.6211 8.1875 19.6211L26.1758 19.626C28.656 19.6259 30.582 17.9757 30.582 15.9014C30.582 13.7545 29.084 12.2101 26.7246 11.8242C26.5485 11.8 26.4729 11.6939 26.4932 11.5205C26.5587 10.9078 26.6194 10.1404 26.5791 9.40234C26.3773 5.81799 23.5082 2.85645 19.5859 2.85645Z"
+      fill="white"
+    />
+  </svg>
+);
+
 export const CharacterCreationSidebarSection = ({
   width,
   collapsed,
@@ -105,7 +158,6 @@ export const CharacterCreationSidebarSection = ({
   onWidthChange,
   onToggleCollapsed,
 }: CharacterCreationSidebarSectionProps): JSX.Element => {
-  const resizeHandleButtonSrc = "https://c.animaapp.com/ViJx1BUZ/img/button-1.svg";
   const createHeaderIconSrc = "https://c.animaapp.com/ViJx1BUZ/img/container.svg";
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -449,11 +501,15 @@ export const CharacterCreationSidebarSection = ({
                 src="https://c.animaapp.com/ViJx1BUZ/img/paper.svg"
               />
 
-              <img
-                className="absolute left-[95px] top-[41px] h-14 w-14 aspect-[1]"
-                alt="Featured icon"
-                src="https://c.animaapp.com/ViJx1BUZ/img/featured-icon.svg"
-              />
+              <div className="absolute left-[95px] top-[41px] h-14 w-14">
+                <div
+                  className="absolute inset-0 rounded-[36px] bg-[rgba(0,0,0,0.2)] backdrop-blur-[4px] [-webkit-backdrop-filter:blur(4px)]"
+                  aria-hidden="true"
+                />
+                <div className="absolute left-1/2 top-1/2 h-[25px] w-[34px] -translate-x-1/2 -translate-y-1/2">
+                  <UploadCloudIcon />
+                </div>
+              </div>
 
               <div className="absolute left-5 top-[104px] flex h-[15px] w-[202px] justify-center">
                 <p
@@ -528,14 +584,7 @@ export const CharacterCreationSidebarSection = ({
         {collapsed ? (
           <CollapsedResizeSidebarHandleIcon />
         ) : (
-          <img
-            className={`h-[58px] w-[33px] mix-blend-color-dodge transition-transform duration-300 ${
-              collapsed ? "rotate-180" : ""
-            }`}
-            alt="Resize sidebar"
-            src={resizeHandleButtonSrc}
-            draggable={false}
-          />
+          <ExpandedResizeSidebarHandleIcon />
         )}
       </button>
     </div>

@@ -5,6 +5,7 @@
 - Repository root for active work: `finalwithskeleton---final-frame-1one/`
 - Stack: React 18 + Vite + TypeScript
 - Styling: Tailwind utility classes embedded directly in TSX
+- Liquid glass rendering for key controls now uses `liquid-glass-react` (not only handcrafted blur/shadow layers)
 - This codebase is an Anima-exported screen that is being refined manually rather than fully re-architected
 
 ## Start Here
@@ -18,7 +19,7 @@
 
 - Primary remote: `origin -> https://github.com/SchwenderOne/finalwithskeleton---final-frame-1one`
 - Mirrored replacement remote: `button-carousel -> https://github.com/SchwenderOne/finalwithskeleton---button-carousel.git`
-- Current work has already been pushed to both remotes during this session
+- Do not assume local changes are already pushed; verify with `git status` and `git log --oneline --decorate -n 5` before concluding push state.
 
 ## Current Layout Decisions
 
@@ -29,9 +30,10 @@
 - The dead-space/background outside the scaled frame must remain a flat solid `#000103`.
 - The main screen background layer under the navbar must keep the same rounded top corners as the glass layer above it.
 - The paper/background texture below the navbar currently relies on:
-  - a dedicated noise texture image layer
-  - a paper tint overlay `rgba(231,228,228,0.2)`
-  - no global blur over the paper layer (to keep noise visible)
+  - `MainBackgroundLayer.tsx` + `MainBackgroundRecipe.ts` with tokenized values
+  - a dedicated local noise texture image (`src/assets/noise-texture-background.png`)
+  - base white + glass tint layer (`rgba(0,0,0,0.004)`) with `5px` blur + paper tint overlay (`rgba(255,255,255,0.2)`)
+  - noise blend currently set via recipe (`noiseBlendMode`), do not change ad hoc in component markup
 
 ## Collapsed Controls Notes
 
@@ -52,6 +54,12 @@
 - Bottom corners are intentionally not rounded.
 - The top-right button group has already been replaced from Figma and should not be reverted to the older oversized export.
 - The left nav items were manually aligned against the right button cluster; preserve that alignment when editing.
+- Current top-right order: `Save` -> `Import` -> (`Play`, `Info`, `Settings`).
+- `Play`/`Info`/`Settings` use a shared `GlassIconButton` (`34.42x34.42`) with:
+  - outer white border ring as the true border (not inner stroke)
+  - clipped liquid-glass layer to avoid square overflow artifacts.
+- `Import` uses a dedicated `GlassImportButton` (`105x49`) with the same outer-border-ring strategy.
+- The spacing between `Play`/`Info`/`Settings` is intentionally tighter than the outer group gap (`21.75px` internal trio gap).
 
 ## Sidebar Notes
 
@@ -61,8 +69,21 @@
   - `create`/`variation`: existing create-state content
   - `edit`: Figma-matched edit-state content (header text/icon + middle controls)
 - The resize-sidebar handle has been manually refined and now uses two render paths:
-  - expanded state: existing exported handle asset
+  - expanded state: custom `ExpandedResizeSidebarHandleIcon` with `liquid-glass-react`
   - collapsed state: Figma-derived `17:4914` structure for immediate arrow visibility and glass behavior.
+- Expanded resize-handle specifics to preserve:
+  - arrow points left
+  - arrow color is `#999999`
+  - border ring is the outer edge (not an inner stroke)
+  - includes additional white fill overlay at `50%` opacity.
+- Sidebar carousel left/right arrow buttons (`SidebarCarousel.tsx`) now follow the same liquid-glass treatment as the resize handle:
+  - centered arrows
+  - arrow color `#999999`
+  - white fill overlay at `50%` opacity.
+- Upload media icon area:
+  - keep the round glass background container
+  - cloud glyph is custom inline SVG centered in `34x25`
+  - avoid reintroducing black outline/stroke from prior asset stacking.
 - Resize/collapse interaction is continuous:
   - dragging below threshold collapses during drag (no pointer-up required)
   - dragging while collapsed expands continuously
@@ -84,6 +105,7 @@
 - For any Figma-driven visual fix, always fetch the node first with Figma MCP:
   - `get_design_context`
   - `get_screenshot`
+- Current full-screen source-of-truth node for this screen: `126:158` (not the older background-only `61:1854`).
 - Do not guess from memory when matching buttons, nav controls, or glass effects.
 - Prefer adapting the current codebase’s existing Tailwind/TSX patterns over pasting raw MCP output directly.
 
@@ -100,11 +122,18 @@
   - contains frame scaling logic plus collapsed-mode spacing/alignment rules for preview and top mode switcher
 - `src/screens/FinalFrame/sections/EditorStepNavigationSection/EditorStepNavigationSection.tsx`
   - small spacing or radius changes are immediately visible
+- `src/screens/FinalFrame/sections/PreviewStageSection/MainBackgroundLayer.tsx`
+  - owns layer stack ordering for white/glass/noise and navbar overlap behavior
+- `src/screens/FinalFrame/sections/PreviewStageSection/MainBackgroundRecipe.ts`
+  - central source of truth for blur/tint/noise blend knobs; changing recipe values can shift whole-screen look
 - `src/screens/FinalFrame/sections/CharacterCreationSidebarSection/CharacterCreationSidebarSection.tsx`
   - many absolute layers overlap; small changes can create duplicate-card or shadow artifacts
   - contains drag state machine for expand/collapse thresholds
   - contains fixed-width Figma-style create button styling that is sensitive to subtle effect changes
+  - now contains expanded resize-handle liquid-glass implementation where small stroke/rotation/overlay changes are highly visible
   - contains edit-mode selection geometry (left focus toggle + person/shield selector) where 1-2px offsets are visibly wrong
+- `src/screens/FinalFrame/sections/CharacterCreationSidebarSection/SidebarCarousel.tsx`
+  - arrow button liquid-glass overlays and border rings are sensitive to tiny centering/opacity changes
 
 ## Recommended Session Workflow
 

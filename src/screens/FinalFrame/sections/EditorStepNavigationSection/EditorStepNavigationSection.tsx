@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import LiquidGlass from "liquid-glass-react";
 
 export type EditorStep = "start" | "step-1" | "step-2" | "step-3" | "step-4";
 
@@ -37,17 +38,6 @@ const HomeIcon = (): JSX.Element => {
   );
 };
 
-const PlayIcon = (): JSX.Element => {
-  return (
-    <svg className="h-[15px] w-[15px]" viewBox="0 0 15 15" fill="none">
-      <path
-        d="M1.57 13.27C1.57 14.25 2.18 14.74 2.91 14.74C3.21 14.74 3.54 14.65 3.85 14.47L13.89 8.72C14.6 8.31 14.95 7.94 14.95 7.37C14.95 6.79 14.6 6.42 13.89 6.02L3.85 0.26C3.54 0.09 3.21 0 2.91 0C2.18 0 1.57 0.48 1.57 1.46V13.27Z"
-        fill="#343434"
-      />
-    </svg>
-  );
-};
-
 const StepArrow = ({ active }: { active: boolean }): JSX.Element => {
   return (
     <svg className="relative h-[17px] w-3.5" viewBox="0 0 14 17" fill="none">
@@ -62,6 +52,64 @@ const StepArrow = ({ active }: { active: boolean }): JSX.Element => {
   );
 };
 
+const GlassIconButton = ({ children }: { children: JSX.Element }): JSX.Element => {
+  return (
+    <div className="relative h-[34.42px] w-[34.42px] shrink-0 rounded-full">
+      <div className="absolute inset-[1.12px] overflow-hidden rounded-full [clip-path:inset(0_round_999px)]">
+        <LiquidGlass
+          className="h-[32.18px] w-[32.18px] overflow-hidden rounded-full"
+          style={{ position: "absolute", top: "50%", left: "50%" }}
+          mode="shader"
+          displacementScale={18}
+          blurAmount={0.028}
+          saturation={132}
+          aberrationIntensity={1.2}
+          elasticity={0}
+          cornerRadius={999}
+          padding="0px"
+        >
+          <div className="relative flex h-[32.18px] w-[32.18px] items-center justify-center overflow-hidden rounded-full border-[0.4px] border-solid border-[rgba(130,130,130,0.18)] bg-[rgba(255,255,255,0.24)]">
+            {children}
+          </div>
+        </LiquidGlass>
+      </div>
+      <div className="pointer-events-none absolute inset-[-0.8px] rounded-full border-[1.2px] border-[rgba(255,255,255,0.68)]" />
+    </div>
+  );
+};
+
+const GlassImportButton = ({ iconSrc }: { iconSrc: string }): JSX.Element => {
+  return (
+    <div className="relative h-[49px] w-[105px] shrink-0 overflow-hidden rounded-[24.622px]">
+      <div className="absolute inset-[1.12px] overflow-hidden rounded-[23.5px] [clip-path:inset(0_round_23.5px)]">
+        <LiquidGlass
+          className="h-[46.76px] w-[102.76px] overflow-hidden rounded-[23.5px]"
+          style={{ position: "absolute", top: "50%", left: "50%" }}
+          mode="shader"
+          displacementScale={20}
+          blurAmount={0.032}
+          saturation={132}
+          aberrationIntensity={1.3}
+          elasticity={0}
+          cornerRadius={23.5}
+          padding="0px"
+        >
+          <button
+            type="button"
+            className="relative flex h-[46.76px] w-[102.76px] items-center justify-between border-[0.5px] border-solid border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] px-[16.5px] py-[14.8px]"
+          >
+            <img className="h-[13px] w-[13px] shrink-0" alt="" src={iconSrc} aria-hidden="true" />
+            <span className="[font-family:'Aeonik_Pro-Medium',Helvetica] text-[16px] font-medium leading-[1.06] tracking-[-0.16px] text-[#343434]">
+              Import
+            </span>
+          </button>
+        </LiquidGlass>
+      </div>
+      <div className="pointer-events-none absolute inset-0 rounded-[24.622px] border-[1.2px] border-[rgba(255,255,255,0.68)]" />
+    </div>
+  );
+};
+
 export const EditorStepNavigationSection = ({
   projectName,
   activeStep,
@@ -70,8 +118,14 @@ export const EditorStepNavigationSection = ({
 }: EditorStepNavigationSectionProps): JSX.Element => {
   const navBackgroundSrc =
     "https://www.figma.com/api/mcp/asset/d89c974d-4887-4e3a-ac59-a65fe60098b4";
+  const playIconSrc =
+    "https://www.figma.com/api/mcp/asset/86534b72-963d-48d0-921e-1fe5bd7f6550";
+  const infoIconSrc =
+    "https://www.figma.com/api/mcp/asset/f17e0ddf-825d-424a-8627-c7cdd71ed2b7";
+  const importIconSrc =
+    "https://www.figma.com/api/mcp/asset/bb1fb513-7c98-4791-b7d0-1d0b181baf4d";
   const gearIconSrc =
-    "https://www.figma.com/api/mcp/asset/975d2646-f647-4a3f-a7d3-0c5fe6a3a6e9";
+    "https://www.figma.com/api/mcp/asset/afc5d405-0d3c-4908-bceb-63ce705f241c";
   const [isEditingName, setIsEditingName] = useState(false);
   const [draftName, setDraftName] = useState(projectName);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -126,18 +180,24 @@ export const EditorStepNavigationSection = ({
           </div>
         </div>
 
-        <div className="relative h-[34.42px] w-[34.42px] shrink-0 rounded-[24.62px] border border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] shadow-[0px_0px_25.097px_0.988px_rgba(0,0,0,0.05)]">
-          <div className="absolute left-[10px] top-[10px]">
-            <PlayIcon />
-          </div>
-        </div>
+        <GlassImportButton iconSrc={importIconSrc} />
 
-        <div className="relative h-[34px] w-[34px] shrink-0 rounded-[24.62px] border border-[rgba(130,130,130,0.15)] bg-[rgba(255,255,255,0.25)] shadow-[0px_0px_25.097px_0.988px_rgba(0,0,0,0.05)]">
-          <img
-            className="absolute left-[7px] top-[7.5px] h-[19px] w-5"
-            alt="Settings"
-            src={gearIconSrc}
-          />
+        <div className="inline-flex items-center gap-[21.75px]">
+          <GlassIconButton>
+            <img className="h-[15px] w-[17px]" alt="Play" src={playIconSrc} />
+          </GlassIconButton>
+
+          <GlassIconButton>
+            <img className="h-[15px] w-3" alt="Info" src={infoIconSrc} />
+          </GlassIconButton>
+
+          <GlassIconButton>
+            <img
+              className="h-[19px] w-5"
+              alt="Settings"
+              src={gearIconSrc}
+            />
+          </GlassIconButton>
         </div>
       </div>
 
