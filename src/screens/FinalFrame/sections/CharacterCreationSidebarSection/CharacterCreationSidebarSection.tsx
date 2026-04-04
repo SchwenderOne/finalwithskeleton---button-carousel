@@ -68,6 +68,7 @@ export const CharacterCreationSidebarSection = ({
   const dragStateRef = useRef({
     moved: false,
     shouldCollapse: false,
+    toggledFromCollapsedDrag: false,
     startWidth: width,
     startX: 0,
   });
@@ -80,6 +81,7 @@ export const CharacterCreationSidebarSection = ({
   const referenceLineWidth = Math.max(120, contentWidth - 73 - lineGap);
   const finishLineWidth = Math.max(120, contentWidth - 43 - 11);
   const carouselWidth = Math.max(280, width - 65);
+  const uploadFrameWidth = 163;
 
   useEffect(() => {
     if (!isDragging) {
@@ -87,27 +89,49 @@ export const CharacterCreationSidebarSection = ({
     }
 
     const handlePointerMove = (event: PointerEvent) => {
-      const rawWidth = dragStateRef.current.startWidth + (event.clientX - dragStateRef.current.startX);
+      const deltaX = event.clientX - dragStateRef.current.startX;
+
+      if (Math.abs(deltaX) > 3) {
+        dragStateRef.current.moved = true;
+      }
+
+      if (collapsed) {
+        if (deltaX <= 3) {
+          return;
+        }
+
+        const expandedDragWidth = Math.max(
+          MIN_SIDEBAR_WIDTH,
+          Math.min(MAX_SIDEBAR_WIDTH, MIN_SIDEBAR_WIDTH + deltaX),
+        );
+        onWidthChange(expandedDragWidth);
+
+        if (!dragStateRef.current.toggledFromCollapsedDrag) {
+          dragStateRef.current.toggledFromCollapsedDrag = true;
+          onToggleCollapsed();
+        }
+        return;
+      }
+
+      const rawWidth = dragStateRef.current.startWidth + deltaX;
+      dragStateRef.current.shouldCollapse = rawWidth < AUTO_COLLAPSE_THRESHOLD;
+      if (dragStateRef.current.shouldCollapse) {
+        setIsDragging(false);
+        onToggleCollapsed();
+        return;
+      }
+
       const nextWidth = Math.max(
         MIN_SIDEBAR_WIDTH,
         Math.min(MAX_SIDEBAR_WIDTH, rawWidth),
       );
-
-      if (Math.abs(event.clientX - dragStateRef.current.startX) > 3) {
-        dragStateRef.current.moved = true;
-      }
-
-      dragStateRef.current.shouldCollapse = rawWidth < AUTO_COLLAPSE_THRESHOLD;
       onWidthChange(nextWidth);
     };
 
     const stopDragging = () => {
-      if (dragStateRef.current.moved && dragStateRef.current.shouldCollapse && !collapsed) {
-        onToggleCollapsed();
-      }
-
       setIsDragging(false);
       dragStateRef.current.shouldCollapse = false;
+      dragStateRef.current.toggledFromCollapsedDrag = false;
     };
 
     window.addEventListener("pointermove", handlePointerMove);
@@ -117,19 +141,16 @@ export const CharacterCreationSidebarSection = ({
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", stopDragging);
     };
-  }, [isDragging, onWidthChange]);
+  }, [collapsed, isDragging, onToggleCollapsed, onWidthChange]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    if (collapsed) {
-      return;
-    }
-
     dragStateRef.current = {
       moved: false,
       shouldCollapse: false,
-      startWidth: width,
+      toggledFromCollapsedDrag: false,
+      startWidth: collapsed ? MIN_SIDEBAR_WIDTH : width,
       startX: event.clientX,
     };
 
@@ -152,6 +173,8 @@ export const CharacterCreationSidebarSection = ({
   const effectiveWidth = collapsed ? width : width;
   const wrapperWidth = effectiveWidth + HANDLE_WIDTH - HANDLE_OVERLAP;
   const handleLeft = collapsed ? COLLAPSED_HANDLE_LEFT_OFFSET : effectiveWidth - HANDLE_OVERLAP;
+  const createButtonWidth = Math.max(120, effectiveWidth - 264);
+  const centerLeft = (itemWidth: number) => Math.max(0, (effectiveWidth - itemWidth) / 2);
   const handleUploadFiles = (files: FileList | null) => {
     const file = files?.[0];
     if (!file || !file.type.startsWith("image/")) {
@@ -178,8 +201,8 @@ export const CharacterCreationSidebarSection = ({
           } ${collapsed ? "pointer-events-none opacity-0" : "opacity-100"}`}
         >
           <div
-            className="absolute left-[41px] top-[25px] flex h-[50px] items-start gap-2.5 rounded-[41.92px] border border-solid border-white bg-[#f3f4f6a1] px-[23px] py-px shadow-[0px_0px_42.73px_1.68px_#0000000d]"
-            style={{ width: headerWidth }}
+            className="absolute top-[25px] flex h-[50px] items-start gap-2.5 rounded-[41.92px] border border-solid border-white bg-[#f3f4f6a1] px-[23px] py-px shadow-[0px_0px_42.73px_1.68px_#0000000d]"
+            style={{ left: centerLeft(headerWidth), width: headerWidth }}
           >
             <div className="relative inline-flex w-full flex-[0_0_auto] items-center gap-2.5 px-[30px] py-3.5">
               <img
@@ -199,8 +222,8 @@ export const CharacterCreationSidebarSection = ({
           <SidebarCarousel width={carouselWidth} />
 
           <div
-            className="absolute left-11 top-[152px] flex h-[111px] rounded-[15.45px] border-[0.5px] border-solid border-white bg-[#ffffff4a] shadow-[0px_0px_41.27px_1.62px_#0000000d]"
-            style={{ width: promptCardWidth }}
+            className="absolute top-[152px] flex h-[111px] rounded-[15.45px] border-[0.5px] border-solid border-white bg-[#ffffff4a] shadow-[0px_0px_41.27px_1.62px_#0000000d]"
+            style={{ left: centerLeft(promptCardWidth), width: promptCardWidth }}
           >
             <textarea
               className="mt-[9.7px] ml-[10.6px] h-[85px] resize-none bg-transparent text-[14.5px] font-medium leading-[15.4px] tracking-[-0.14px] text-[#343434e0] outline-none placeholder:text-[#34343499] [font-family:'Aeonik_Pro-Medium',Helvetica]"
@@ -211,7 +234,10 @@ export const CharacterCreationSidebarSection = ({
             />
           </div>
 
-          <div className="absolute left-[21px] top-[108px] flex items-center" style={{ width: contentWidth }}>
+          <div
+            className="absolute top-[108px] flex items-center"
+            style={{ left: centerLeft(contentWidth), width: contentWidth }}
+          >
             <div className="relative h-[15px] w-[145px]">
               <p className="absolute left-0 top-0 h-[15px] w-[145px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
                 What do you think of?
@@ -221,7 +247,10 @@ export const CharacterCreationSidebarSection = ({
             <div className="ml-4 h-[4px] rounded-full bg-[#656565]" style={{ width: lineWidth }} />
           </div>
 
-          <div className="absolute left-[21px] top-[429px] flex h-[15px] items-center" style={{ width: contentWidth }}>
+          <div
+            className="absolute top-[429px] flex h-[15px] items-center"
+            style={{ left: centerLeft(contentWidth), width: contentWidth }}
+          >
             <div className="relative h-[13px] w-[73px]">
               <div className="absolute left-0 top-0 h-[13px] w-[73px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
                 Reference
@@ -231,7 +260,10 @@ export const CharacterCreationSidebarSection = ({
             <div className="ml-4 h-[4px] rounded-full bg-[#656565]" style={{ width: referenceLineWidth }} />
           </div>
 
-          <div className="absolute left-[127px] top-[463px] h-40 w-[163px]">
+          <div
+            className="absolute top-[463px] h-40"
+            style={{ left: centerLeft(uploadFrameWidth), width: uploadFrameWidth }}
+          >
             <button
               className={`relative left-[-22.62%] top-[16.88%] h-[89.38%] w-[148.82%] rounded-[16.75px] border-[0.4px] border-solid border-[#ffffff4c] bg-[#84848433] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] ${
                 isUploadDragOver ? "ring-2 ring-[#226ab3]" : ""
@@ -281,7 +313,10 @@ export const CharacterCreationSidebarSection = ({
             }}
           />
 
-          <div className="absolute left-[21px] top-[676px] inline-flex h-[15px] items-center gap-[11px]">
+          <div
+            className="absolute top-[676px] inline-flex h-[15px] items-center gap-[11px]"
+            style={{ left: centerLeft(contentWidth), width: contentWidth }}
+          >
             <div className="relative h-[13px] w-[43.26px]">
               <div className="absolute left-0 top-0 w-[43px] overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
                 Finish
@@ -291,7 +326,10 @@ export const CharacterCreationSidebarSection = ({
             <div className="h-[4px] rounded-full bg-[#656565]" style={{ width: finishLineWidth }} />
           </div>
 
-          <button className="all-[unset] box-border absolute left-[125px] top-[calc(50.00%_+_318px)] flex w-[calc(100%_-_264px)] flex-col items-start gap-2.5 rounded-[27.87px] border-[0.4px] border-solid border-[#0004ff4c] bg-[#50505033] px-[25px] py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]">
+          <button
+            className="all-[unset] box-border absolute top-[calc(50.00%_+_318px)] flex flex-col items-start gap-2.5 rounded-[27.87px] border-[0.4px] border-solid border-[#0004ff4c] bg-[#50505033] px-[25px] py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]"
+            style={{ left: centerLeft(createButtonWidth), width: createButtonWidth }}
+          >
             <div className="relative h-[31px] w-full self-stretch">
               <div className="absolute left-[calc(50.00%_-_52px)] top-[calc(50.00%_-_16px)] flex h-[31px] w-[104px] items-center justify-center [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-2xl font-medium leading-[25.4px] tracking-[-0.72px] text-[#226ab3]">
                 Create
