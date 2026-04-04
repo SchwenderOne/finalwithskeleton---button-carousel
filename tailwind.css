@@ -20,20 +20,6 @@
   }
 }
 
-@font-face {
-  font-family: "Aeonik Pro-Medium";
-  src: url("./static/aeonikpro-medium.otf") format("opentype");
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Aeonik Pro-Bold";
-  src: url("./static/aeonikpro-bold.otf") format("opentype");
-  font-weight: 700;
-  font-style: normal;
-}
-
 :root {
   --animate-spin: spin 1s linear infinite;
 }
