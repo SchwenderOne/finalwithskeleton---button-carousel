@@ -14,10 +14,42 @@ type CharacterCreationSidebarSectionProps = {
 
 const HANDLE_WIDTH = 38;
 const HANDLE_OVERLAP = 23;
+const COLLAPSED_HANDLE_LEFT_OFFSET = -11;
 const SIDEBAR_HEIGHT = 799;
 const MIN_SIDEBAR_WIDTH = 360;
 const MAX_SIDEBAR_WIDTH = 520;
 const AUTO_COLLAPSE_THRESHOLD = MIN_SIDEBAR_WIDTH - 28;
+
+const CollapsedResizeSidebarHandleIcon = (): JSX.Element => (
+  <div className="relative h-[54.875px] w-[27px]">
+    <div
+      aria-hidden="true"
+      className="absolute bottom-0 left-[-1px] right-[-1.13px] top-[-1px] rounded-[15px] border-2 border-[rgba(220,220,220,0.8)] bg-[#0f0f0f] [mix-blend-mode:color-dodge]"
+    />
+    <div
+      aria-hidden="true"
+      className="absolute bottom-0 left-[-1px] right-[-1.13px] top-[-1px] rounded-[16px] bg-[rgba(0,0,0,0)]"
+    />
+    <div
+      className="absolute left-1/2 top-1/2 h-[10.125px] w-[18.176px]"
+      style={{ transform: "translate(-50%, -50%) rotate(-90deg) scaleY(-1)" }}
+    >
+      <svg
+        className="block h-full w-full max-w-none"
+        preserveAspectRatio="none"
+        viewBox="0 0 18.1755 10.125"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          d="M0.403902 7.83703C0.141169 8.09331 0 8.40534 0 8.76932C0 9.51958 0.631341 10.125 1.41562 10.125C1.80775 10.125 2.17636 9.97644 2.45478 9.69415L9.08977 3.17902L15.7208 9.69415C16.0032 9.98017 16.3756 10.125 16.7599 10.125C17.5403 10.125 18.1755 9.51958 18.1755 8.76932C18.1755 8.39788 18.0422 8.08965 17.7677 7.83703L10.2505 0.501423C9.90146 0.167141 9.53678 0.00742849 9.08977 0C8.65056 0 8.28194 0.159713 7.92902 0.501423L0.403902 7.83703Z"
+          fill="#4A82BA"
+        />
+      </svg>
+    </div>
+  </div>
+);
 
 export const CharacterCreationSidebarSection = ({
   width,
@@ -119,6 +151,7 @@ export const CharacterCreationSidebarSection = ({
 
   const effectiveWidth = collapsed ? width : width;
   const wrapperWidth = effectiveWidth + HANDLE_WIDTH - HANDLE_OVERLAP;
+  const handleLeft = collapsed ? COLLAPSED_HANDLE_LEFT_OFFSET : effectiveWidth - HANDLE_OVERLAP;
   const handleUploadFiles = (files: FileList | null) => {
     const file = files?.[0];
     if (!file || !file.type.startsWith("image/")) {
@@ -130,6 +163,7 @@ export const CharacterCreationSidebarSection = ({
 
   return (
     <div className="absolute left-7 top-[161px]" style={{ width: wrapperWidth, height: SIDEBAR_HEIGHT }}>
+      {!collapsed ? (
       <div
         className={`absolute left-0 top-0 h-[799px] rounded-xl shadow-[0px_8px_40px_#0000001f] bg-[linear-gradient(0deg,rgba(207,207,207,1)_0%,rgba(207,207,207,1)_100%)] ${
           isDragging ? "" : "transition-[width] duration-300 ease-out"
@@ -266,12 +300,13 @@ export const CharacterCreationSidebarSection = ({
           </button>
         </div>
       </div>
+      ) : null}
 
       <button
         className={`all-[unset] box-border absolute top-[342px] flex h-[60px] w-[38px] items-center justify-center ${
           isDragging ? "" : "transition-[left] duration-300 ease-out"
         }`}
-        style={{ left: effectiveWidth - HANDLE_OVERLAP, touchAction: "none", cursor: "col-resize" }}
+        style={{ left: handleLeft, touchAction: "none", cursor: "col-resize" }}
         type="button"
         onPointerDown={handlePointerDown}
         onDragStart={(event) => event.preventDefault()}
@@ -285,14 +320,18 @@ export const CharacterCreationSidebarSection = ({
         }}
         aria-label={collapsed ? "Expand sidebar" : "Resize or collapse sidebar"}
       >
-        <img
-          className={`h-[58px] w-[33px] mix-blend-color-dodge transition-transform duration-300 ${
-            collapsed ? "rotate-180" : ""
-          }`}
-          alt="Resize sidebar"
-          src={resizeHandleButtonSrc}
-          draggable={false}
-        />
+        {collapsed ? (
+          <CollapsedResizeSidebarHandleIcon />
+        ) : (
+          <img
+            className={`h-[58px] w-[33px] mix-blend-color-dodge transition-transform duration-300 ${
+              collapsed ? "rotate-180" : ""
+            }`}
+            alt="Resize sidebar"
+            src={resizeHandleButtonSrc}
+            draggable={false}
+          />
+        )}
       </button>
     </div>
   );

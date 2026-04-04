@@ -4,6 +4,7 @@ export type ViewType = "360" | "grid" | "shield" | "skeleton";
 type TopModeSwitcherProps = {
   mode: ModeType;
   onModeChange: (mode: ModeType) => void;
+  collapsed?: boolean;
   width?: number;
 };
 
@@ -101,52 +102,68 @@ const buttonBaseClasses =
 export const TopModeSwitcher = ({
   mode,
   onModeChange,
+  collapsed = false,
   width = 371,
 }: TopModeSwitcherProps): JSX.Element => {
   const activeClasses =
     "border-[0.4px] border-solid border-[#ffffff4c] bg-[#85848433] text-white shadow-[0px_4px_4px_#00000040,inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)]";
   const inactiveClasses = "border-[0.4px] border-transparent text-[#464545]";
+  const containerWidth = collapsed ? 37 : width;
+  const containerHeight = collapsed ? 107 : 33;
+  const collapsedButtonClasses = "h-[31px] w-[31px] shrink-0 px-0";
 
   return (
     <div
       className="h-[33px] rounded-[19.06px] border-[0.5px] border-solid border-white bg-[#c3c2c280] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)]"
-      style={{ width }}
+      style={{ width: containerWidth, height: containerHeight }}
     >
-      <div className="flex h-full items-center gap-[4px] px-[3px]">
+      <div className={`flex h-full px-[3px] ${collapsed ? "flex-col items-center gap-[4px] py-[3px]" : "items-center gap-[4px]"}`}>
         <button
-          className={`${buttonBaseClasses} flex-[1.04] ${mode === "variation" ? `${activeClasses} px-4` : inactiveClasses}`}
+          className={`${buttonBaseClasses} ${
+            collapsed ? collapsedButtonClasses : "flex-[1.04]"
+          } ${mode === "variation" ? `${activeClasses} ${collapsed ? "" : "px-4"}` : inactiveClasses}`}
           type="button"
           onClick={() => onModeChange("variation")}
           aria-pressed={mode === "variation"}
         >
           <VariationIcon />
-          <span className="truncate [font-family:'Aeonik_Pro-Medium',Helvetica] text-base font-medium leading-[17px] tracking-[-0.16px] text-current">
-            Variation
-          </span>
+          {collapsed ? null : (
+            <span className="truncate [font-family:'Aeonik_Pro-Medium',Helvetica] text-base font-medium leading-[17px] tracking-[-0.16px] text-current">
+              Variation
+            </span>
+          )}
         </button>
 
         <button
-          className={`${buttonBaseClasses} flex-[1.02] ${mode === "create" ? activeClasses : inactiveClasses}`}
+          className={`${buttonBaseClasses} ${
+            collapsed ? collapsedButtonClasses : "flex-[1.02]"
+          } ${mode === "create" ? activeClasses : inactiveClasses}`}
           type="button"
           onClick={() => onModeChange("create")}
           aria-pressed={mode === "create"}
         >
           <CreateIcon />
-          <span className="truncate [font-family:'Aeonik_Pro-Medium',Helvetica] text-[17.7px] font-medium leading-[18.8px] tracking-[-0.18px] text-current">
-            Create
-          </span>
+          {collapsed ? null : (
+            <span className="truncate [font-family:'Aeonik_Pro-Medium',Helvetica] text-[17.7px] font-medium leading-[18.8px] tracking-[-0.18px] text-current">
+              Create
+            </span>
+          )}
         </button>
 
         <button
-          className={`${buttonBaseClasses} flex-[0.79] ${mode === "edit" ? `${activeClasses} px-4` : inactiveClasses}`}
+          className={`${buttonBaseClasses} ${
+            collapsed ? collapsedButtonClasses : "flex-[0.79]"
+          } ${mode === "edit" ? `${activeClasses} ${collapsed ? "" : "px-4"}` : inactiveClasses}`}
           type="button"
           onClick={() => onModeChange("edit")}
           aria-pressed={mode === "edit"}
         >
           <EditIcon />
-          <span className="truncate [font-family:'Aeonik_Pro-Medium',Helvetica] text-base font-medium leading-[17px] tracking-[-0.16px] text-current">
-            Edit
-          </span>
+          {collapsed ? null : (
+            <span className="truncate [font-family:'Aeonik_Pro-Medium',Helvetica] text-base font-medium leading-[17px] tracking-[-0.16px] text-current">
+              Edit
+            </span>
+          )}
         </button>
       </div>
     </div>

@@ -30,10 +30,19 @@ const MAX_CANVAS_ZOOM = 4;
 const SIDEBAR_DEFAULT_WIDTH = 418;
 const SIDEBAR_COLLAPSED_WIDTH = 76;
 const SIDEBAR_LEFT = 28;
+const SIDEBAR_COLLAPSED_HANDLE_LEFT_OFFSET = -11;
+const SIDEBAR_HANDLE_WIDTH = 38;
 const PREVIEW_RIGHT_GUTTER = 24;
 const PREVIEW_GAP = 32;
 const MODE_SWITCHER_MAX_WIDTH = 371;
 const MODE_SWITCHER_MIN_WIDTH = 235;
+const MODE_SWITCHER_EXPANDED_LEFT = 51;
+const MODE_SWITCHER_COLLAPSED_WIDTH = 37;
+const COLLAPSED_HANDLE_LEFT_MARGIN = SIDEBAR_LEFT + SIDEBAR_COLLAPSED_HANDLE_LEFT_OFFSET;
+const COLLAPSED_HANDLE_RIGHT =
+  SIDEBAR_LEFT + SIDEBAR_COLLAPSED_HANDLE_LEFT_OFFSET + SIDEBAR_HANDLE_WIDTH;
+const MODE_SWITCHER_COLLAPSED_CENTERLINE =
+  SIDEBAR_LEFT + SIDEBAR_COLLAPSED_HANDLE_LEFT_OFFSET + SIDEBAR_HANDLE_WIDTH / 2;
 
 export const FinalFrame = (): JSX.Element => {
   const previewViewportRef = useRef<HTMLDivElement | null>(null);
@@ -130,13 +139,20 @@ export const FinalFrame = (): JSX.Element => {
   }, []);
 
   const currentSidebarWidth = isSidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH : sidebarWidth;
-  const previewLeft = SIDEBAR_LEFT + currentSidebarWidth + PREVIEW_GAP;
+  const previewLeft = isSidebarCollapsed
+    ? COLLAPSED_HANDLE_RIGHT + COLLAPSED_HANDLE_LEFT_MARGIN
+    : SIDEBAR_LEFT + currentSidebarWidth + PREVIEW_GAP;
   const previewWidth = FRAME_WIDTH - previewLeft - PREVIEW_RIGHT_GUTTER;
   const previewInnerWidth = previewWidth - 23;
-  const modeSwitcherWidth = Math.max(
-    MODE_SWITCHER_MIN_WIDTH,
-    Math.min(MODE_SWITCHER_MAX_WIDTH, currentSidebarWidth - 47),
-  );
+  const modeSwitcherWidth = isSidebarCollapsed
+    ? MODE_SWITCHER_COLLAPSED_WIDTH
+    : Math.max(
+        MODE_SWITCHER_MIN_WIDTH,
+        Math.min(MODE_SWITCHER_MAX_WIDTH, currentSidebarWidth - 47),
+      );
+  const modeSwitcherLeft = isSidebarCollapsed
+    ? MODE_SWITCHER_COLLAPSED_CENTERLINE - MODE_SWITCHER_COLLAPSED_WIDTH / 2
+    : MODE_SWITCHER_EXPANDED_LEFT;
   const uploadedCharacterScreenPosition = uploadedCharacter
     ? {
         height: uploadedCharacter.baseHeight * canvasViewport.zoom,
@@ -233,10 +249,14 @@ export const FinalFrame = (): JSX.Element => {
             onToggleCollapsed={() => setIsSidebarCollapsed((current) => !current)}
           />
 
-          <div className="absolute left-[51px] top-28 transition-[width] duration-300 ease-out">
+          <div
+            className="absolute top-28 transition-[left,width] duration-300 ease-out"
+            style={{ left: modeSwitcherLeft }}
+          >
             <TopModeSwitcher
               mode={activeTopMode}
               onModeChange={setActiveTopMode}
+              collapsed={isSidebarCollapsed}
               width={modeSwitcherWidth}
             />
           </div>
