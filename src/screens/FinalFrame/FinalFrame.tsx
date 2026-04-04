@@ -241,6 +241,7 @@ export const FinalFrame = (): JSX.Element => {
           <CharacterCreationSidebarSection
             width={currentSidebarWidth}
             collapsed={isSidebarCollapsed}
+            mode={activeTopMode}
             uploadedCharacterName={uploadedCharacter?.name ?? null}
             promptText={promptText}
             onCharacterUpload={handleCharacterUpload}

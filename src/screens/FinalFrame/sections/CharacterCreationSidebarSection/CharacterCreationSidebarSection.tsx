@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import type { ModeType } from "../PreviewStageSection/ControlGroups";
 import { SidebarCarousel } from "./SidebarCarousel";
 
 type CharacterCreationSidebarSectionProps = {
   width: number;
   collapsed: boolean;
+  mode: ModeType;
   promptText: string;
   uploadedCharacterName: string | null;
   onCharacterUpload: (file: File) => void;
@@ -20,6 +22,18 @@ const MIN_SIDEBAR_WIDTH = 360;
 const MAX_SIDEBAR_WIDTH = 520;
 const AUTO_COLLAPSE_THRESHOLD = MIN_SIDEBAR_WIDTH - 28;
 const CREATE_BUTTON_WIDTH = 154;
+const EDIT_CONTROLS_WIDTH = 267;
+const EDIT_LEFT_CONTROL_WIDTH = 87;
+const EDIT_RIGHT_CONTROL_WIDTH = 132;
+const EDIT_TYPE_SLOT_WIDTH = 65;
+const EDIT_TYPE_SLOT_HEIGHT = 57;
+const EDIT_TYPE_SLOT_TOP = 3;
+const EDIT_TYPE_PERSON_LEFT = 4;
+const EDIT_TYPE_SHIELD_LEFT = 63;
+const EDIT_HEADER_ICON_BASE_SRC = "https://www.figma.com/api/mcp/asset/571fa50d-42b4-4cea-a277-28e26b50153a";
+const EDIT_HEADER_ICON_DETAIL_SRC = "https://www.figma.com/api/mcp/asset/cc1a3555-5f10-4e4b-a54f-c405a6641140";
+const EDIT_FOCUS_ICON_SRC = "https://www.figma.com/api/mcp/asset/7589282f-6798-432a-825c-12a178b37ca1";
+const EDIT_SHIELD_ICON_SRC = "https://www.figma.com/api/mcp/asset/36f00bb4-b4c6-4142-8a61-2555ed6e3d13";
 
 const CollapsedResizeSidebarHandleIcon = (): JSX.Element => (
   <div className="relative h-[54.875px] w-[27px]">
@@ -52,9 +66,38 @@ const CollapsedResizeSidebarHandleIcon = (): JSX.Element => (
   </div>
 );
 
+const ActiveButtonGlass = ({
+  className,
+  roundedClass = "rounded-[20px]",
+}: {
+  className: string;
+  roundedClass?: string;
+}): JSX.Element => (
+  <div className={`${className} overflow-hidden ${roundedClass}`}>
+    <div className={`absolute inset-0 bg-[rgba(255,255,255,0.04)] ${roundedClass}`} />
+    <div
+      className={`absolute inset-0 bg-[rgba(30,30,30,0.25)] ${roundedClass}`}
+      style={{ mixBlendMode: "plus-lighter" }}
+    />
+  </div>
+);
+
+const EditPersonIcon = ({ className }: { className: string }): JSX.Element => (
+  <svg className={className} viewBox="0 0 65 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path
+      d="M50.7061 48C50.7061 44.8987 50.7061 43.3481 50.3185 42.0863C49.446 39.2454 47.195 37.0223 44.3186 36.1605C43.0411 35.7778 41.4711 35.7778 38.331 35.7778H27.0811C23.941 35.7778 22.371 35.7778 21.0935 36.1605C18.2171 37.0223 15.9661 39.2454 15.0936 42.0863C14.7061 43.3481 14.7061 44.8987 14.7061 48M42.8311 18C42.8311 23.5228 38.2979 28 32.7061 28C27.1142 28 22.5811 23.5228 22.5811 18C22.5811 12.4772 27.1142 8 32.7061 8C38.2979 8 42.8311 12.4772 42.8311 18Z"
+      stroke="#226AB3"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const CharacterCreationSidebarSection = ({
   width,
   collapsed,
+  mode,
   promptText,
   uploadedCharacterName,
   onCharacterUpload,
@@ -63,9 +106,12 @@ export const CharacterCreationSidebarSection = ({
   onToggleCollapsed,
 }: CharacterCreationSidebarSectionProps): JSX.Element => {
   const resizeHandleButtonSrc = "https://c.animaapp.com/ViJx1BUZ/img/button-1.svg";
+  const createHeaderIconSrc = "https://c.animaapp.com/ViJx1BUZ/img/container.svg";
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploadDragOver, setIsUploadDragOver] = useState(false);
+  const [isEditFocusSelected, setIsEditFocusSelected] = useState(false);
+  const [selectedEditType, setSelectedEditType] = useState<"person" | "shield">("person");
   const dragStateRef = useRef({
     moved: false,
     shouldCollapse: false,
@@ -76,9 +122,13 @@ export const CharacterCreationSidebarSection = ({
   const contentWidth = Math.max(0, width - 42);
   const headerWidth = Math.max(250, width - 79);
   const promptCardWidth = Math.max(260, width - 72);
+  const isEditMode = mode === "edit";
+  const promptSectionLabel = isEditMode ? "What do you want to change?" : "What do you think of?";
+  const promptSectionLabelWidth = isEditMode ? 204 : 145;
+  const headerLabel = isEditMode ? "Edit your Character" : "Create your Character";
   const lineGap = 16;
   const promptInnerWidth = Math.max(200, promptCardWidth - 24);
-  const lineWidth = Math.max(120, contentWidth - 145 - lineGap);
+  const lineWidth = Math.max(120, contentWidth - promptSectionLabelWidth - lineGap);
   const referenceLineWidth = Math.max(120, contentWidth - 73 - lineGap);
   const finishLineWidth = Math.max(120, contentWidth - 43 - 11);
   const carouselWidth = Math.max(280, width - 65);
@@ -205,21 +255,132 @@ export const CharacterCreationSidebarSection = ({
             style={{ left: centerLeft(headerWidth), width: headerWidth }}
           >
             <div className="relative inline-flex w-full flex-[0_0_auto] items-center gap-2.5 px-[30px] py-3.5">
-              <img
-                className="relative z-10 -my-px -ml-px -mr-px h-[22px] w-[21px] shrink-0"
-                alt="Container"
-                src="https://c.animaapp.com/ViJx1BUZ/img/container.svg"
-              />
+              {isEditMode ? (
+                <div className="relative z-10 h-5 w-5 shrink-0 overflow-hidden">
+                  <img
+                    className="absolute inset-0 h-full w-full max-w-none"
+                    alt="Edit mode"
+                    src={EDIT_HEADER_ICON_BASE_SRC}
+                  />
+                  <img
+                    className="absolute inset-[0_0_0_0.2px] h-full w-full max-w-none"
+                    alt=""
+                    src={EDIT_HEADER_ICON_DETAIL_SRC}
+                    aria-hidden="true"
+                  />
+                </div>
+              ) : (
+                <img
+                  className="relative z-10 -my-px -ml-px -mr-px h-[22px] w-[21px] shrink-0"
+                  alt="Create mode"
+                  src={createHeaderIconSrc}
+                />
+              )}
 
               <div className="absolute left-0 top-0 h-[49px] w-full">
-                <div className="absolute left-0 top-0 flex h-[49px] w-full items-center justify-center overflow-hidden pl-[58px] pr-6 text-ellipsis bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[17.7px] font-medium leading-[18.8px] tracking-[-0.18px] text-[#1f1f1f]">
-                  Create your Character
+                <div className="absolute left-0 top-0 flex h-[49px] w-full items-center justify-center overflow-hidden pl-[58px] pr-6 text-ellipsis bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[17.7px] font-medium leading-[18.8px] tracking-[-0.18px] text-[#343434]">
+                  {headerLabel}
                 </div>
               </div>
             </div>
           </div>
 
-          <SidebarCarousel width={carouselWidth} />
+          {isEditMode ? (
+            <div
+              className="absolute top-[309px] h-[63px]"
+              style={{ left: centerLeft(EDIT_CONTROLS_WIDTH), width: EDIT_CONTROLS_WIDTH }}
+            >
+              <button
+                className="absolute left-0 top-0 h-[63px] rounded-[16px] border-[0.4px] border-solid border-[#ededec]"
+                style={{ width: EDIT_LEFT_CONTROL_WIDTH }}
+                type="button"
+                aria-label="Edit focus mode"
+                aria-pressed={isEditFocusSelected}
+                onClick={() => setIsEditFocusSelected((current) => !current)}
+              >
+                <div className="absolute inset-0 rounded-[16px] bg-[#0f0f0f] [mix-blend-mode:color-dodge]" />
+                <div className="absolute inset-0 rounded-[16px] bg-[rgba(245,245,245,0.4)]" />
+                {isEditFocusSelected ? (
+                  <ActiveButtonGlass className="absolute left-[11px] top-[3px] h-[57px] w-[65px]" />
+                ) : null}
+                <img
+                  className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2"
+                  alt="Focus"
+                  src={EDIT_FOCUS_ICON_SRC}
+                />
+              </button>
+
+              <div
+                className="absolute top-0 h-[63px] rounded-[16px] border-[0.4px] border-solid border-[#ededec]"
+                style={{ left: 135, width: EDIT_RIGHT_CONTROL_WIDTH }}
+                role="group"
+                aria-label="Edit type selector"
+              >
+                <div className="absolute inset-0 rounded-[16px] bg-[#0f0f0f] [mix-blend-mode:color-dodge]" />
+                <div className="absolute inset-0 rounded-[16px] bg-[rgba(245,245,245,0.4)]" />
+                {selectedEditType === "person" ? (
+                  <div
+                    className="absolute"
+                    style={{
+                      left: EDIT_TYPE_PERSON_LEFT,
+                      top: EDIT_TYPE_SLOT_TOP,
+                      width: EDIT_TYPE_SLOT_WIDTH,
+                      height: EDIT_TYPE_SLOT_HEIGHT,
+                    }}
+                  >
+                    <ActiveButtonGlass className="absolute inset-0" roundedClass="rounded-[20px]" />
+                  </div>
+                ) : null}
+                {selectedEditType === "shield" ? (
+                  <div
+                    className="absolute"
+                    style={{
+                      left: EDIT_TYPE_SHIELD_LEFT,
+                      top: EDIT_TYPE_SLOT_TOP,
+                      width: EDIT_TYPE_SLOT_WIDTH,
+                      height: EDIT_TYPE_SLOT_HEIGHT,
+                    }}
+                  >
+                    <ActiveButtonGlass className="absolute inset-0" roundedClass="rounded-[20px]" />
+                  </div>
+                ) : null}
+                <button
+                  className="all-[unset] box-border absolute cursor-pointer rounded-[20px]"
+                  style={{
+                    left: EDIT_TYPE_PERSON_LEFT,
+                    top: EDIT_TYPE_SLOT_TOP,
+                    width: EDIT_TYPE_SLOT_WIDTH,
+                    height: EDIT_TYPE_SLOT_HEIGHT,
+                  }}
+                  type="button"
+                  aria-label="Person edit type"
+                  aria-pressed={selectedEditType === "person"}
+                  onClick={() => setSelectedEditType("person")}
+                />
+                <button
+                  className="all-[unset] box-border absolute cursor-pointer rounded-[20px]"
+                  style={{
+                    left: EDIT_TYPE_SHIELD_LEFT,
+                    top: EDIT_TYPE_SLOT_TOP,
+                    width: EDIT_TYPE_SLOT_WIDTH,
+                    height: EDIT_TYPE_SLOT_HEIGHT,
+                  }}
+                  type="button"
+                  aria-label="Shield edit type"
+                  aria-pressed={selectedEditType === "shield"}
+                  onClick={() => setSelectedEditType("shield")}
+                />
+                <EditPersonIcon className="pointer-events-none absolute left-[4px] top-[3px] h-[57px] w-[65px]" />
+                <img
+                  className="pointer-events-none absolute left-[78px] top-[10px] h-[44px] w-[35px]"
+                  alt="Shield option"
+                  src={EDIT_SHIELD_ICON_SRC}
+                />
+              </div>
+            </div>
+          ) : (
+            <SidebarCarousel width={carouselWidth} />
+          )}
 
           <div
             className="absolute top-[152px] flex h-[111px] rounded-[15.45px] border-[0.5px] border-solid border-white bg-[#ffffff4a] shadow-[0px_0px_41.27px_1.62px_#0000000d]"
@@ -238,9 +399,9 @@ export const CharacterCreationSidebarSection = ({
             className="absolute top-[108px] flex items-center"
             style={{ left: centerLeft(contentWidth), width: contentWidth }}
           >
-            <div className="relative h-[15px] w-[145px]">
-              <p className="absolute left-0 top-0 h-[15px] w-[145px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:0] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
-                What do you think of?
+            <div className="relative h-[15px]" style={{ width: promptSectionLabelWidth }}>
+              <p className="absolute left-0 top-0 h-[15px] w-full overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [font-family:'Aeonik_Pro-Medium',Helvetica] text-[15px] font-medium leading-[15.9px] tracking-[-0.45px] text-[#202020]">
+                {promptSectionLabel}
               </p>
             </div>
 
@@ -295,7 +456,11 @@ export const CharacterCreationSidebarSection = ({
               />
 
               <div className="absolute left-5 top-[104px] flex h-[15px] w-[202px] justify-center">
-                <p className="h-[15px] w-[202px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-sm font-medium leading-[14.8px] tracking-[-0.42px] text-white">
+                <p
+                  className={`h-[15px] w-[202px] items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap bg-blend-exclusion [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1] [font-family:'Aeonik_Pro-Medium',Helvetica] text-center text-sm font-medium leading-[14.8px] tracking-[-0.42px] ${
+                    isEditMode ? "text-[rgba(52,52,52,0.62)]" : "text-white"
+                  }`}
+                >
                   {uploadedCharacterName ?? "Drag and drop media below 15MB"}
                 </p>
               </div>
@@ -327,7 +492,9 @@ export const CharacterCreationSidebarSection = ({
           </div>
 
           <button
-            className="all-[unset] box-border absolute top-[calc(50.00%_+_318px)] isolate flex flex-col items-start rounded-[27.87px] border-[0.4px] border-solid border-transparent bg-[#50505033] px-[25px] py-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] [mix-blend-mode:normal]"
+            className={`all-[unset] box-border absolute top-[calc(50.00%_+_318px)] isolate flex flex-col items-start rounded-[27.87px] border-[0.4px] border-solid bg-[#50505033] px-[25px] py-[14px] shadow-[inset_0_1px_0_rgba(255,255,255,0.40),inset_1px_0_0_rgba(255,255,255,0.32),inset_0_-1px_1px_rgba(0,0,0,0.11),inset_-1px_0_1px_rgba(0,0,0,0.08)] backdrop-blur-[1.6px] backdrop-brightness-[100.0%] backdrop-saturate-[100.0%] [-webkit-backdrop-filter:blur(1.6px)_brightness(100.0%)_saturate(100.0%)] [mix-blend-mode:normal] ${
+              isEditMode ? "border-[rgba(0,4,255,0.3)]" : "border-transparent"
+            }`}
             style={{ left: centerLeft(CREATE_BUTTON_WIDTH), width: CREATE_BUTTON_WIDTH }}
           >
             <div className="relative h-[31px] w-full self-stretch">
