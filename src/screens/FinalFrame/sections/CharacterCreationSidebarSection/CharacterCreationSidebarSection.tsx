@@ -28,13 +28,27 @@ const EDIT_LEFT_CONTROL_WIDTH = 87;
 const EDIT_RIGHT_CONTROL_WIDTH = 132;
 const EDIT_TYPE_SLOT_WIDTH = 65;
 const EDIT_TYPE_SLOT_HEIGHT = 57;
-const EDIT_TYPE_SLOT_TOP = 3;
-const EDIT_TYPE_PERSON_LEFT = 4;
-const EDIT_TYPE_SHIELD_LEFT = 63;
+const EDIT_CONTROL_HEIGHT = 63;
+const EDIT_TYPE_SLOT_TOP = (EDIT_CONTROL_HEIGHT - EDIT_TYPE_SLOT_HEIGHT) / 2;
+const EDIT_LEFT_INDICATOR_LEFT = (EDIT_LEFT_CONTROL_WIDTH - EDIT_TYPE_SLOT_WIDTH) / 2;
+const EDIT_RIGHT_HALF_WIDTH = EDIT_RIGHT_CONTROL_WIDTH / 2;
+const EDIT_TYPE_PERSON_LEFT = (EDIT_RIGHT_HALF_WIDTH - EDIT_TYPE_SLOT_WIDTH) / 2;
+const EDIT_TYPE_SHIELD_LEFT = EDIT_RIGHT_HALF_WIDTH + EDIT_TYPE_PERSON_LEFT;
+const EDIT_SHIELD_ICON_WIDTH = 35;
+const EDIT_SHIELD_ICON_HEIGHT = 44;
+const EDIT_SHIELD_ICON_LEFT =
+  EDIT_TYPE_SHIELD_LEFT + (EDIT_TYPE_SLOT_WIDTH - EDIT_SHIELD_ICON_WIDTH) / 2;
+const EDIT_SHIELD_ICON_TOP = (EDIT_CONTROL_HEIGHT - EDIT_SHIELD_ICON_HEIGHT) / 2;
 const EDIT_HEADER_ICON_BASE_SRC = "https://www.figma.com/api/mcp/asset/571fa50d-42b4-4cea-a277-28e26b50153a";
 const EDIT_HEADER_ICON_DETAIL_SRC = "https://www.figma.com/api/mcp/asset/cc1a3555-5f10-4e4b-a54f-c405a6641140";
 const EDIT_FOCUS_ICON_SRC = "https://www.figma.com/api/mcp/asset/7589282f-6798-432a-825c-12a178b37ca1";
 const EDIT_SHIELD_ICON_SRC = "https://www.figma.com/api/mcp/asset/36f00bb4-b4c6-4142-8a61-2555ed6e3d13";
+const EDIT_ASSET_URLS = [
+  EDIT_HEADER_ICON_BASE_SRC,
+  EDIT_HEADER_ICON_DETAIL_SRC,
+  EDIT_FOCUS_ICON_SRC,
+  EDIT_SHIELD_ICON_SRC,
+];
 
 const CollapsedResizeSidebarHandleIcon = (): JSX.Element => (
   <div className="relative h-[54.875px] w-[27px]">
@@ -112,22 +126,52 @@ const ExpandedResizeSidebarHandleIcon = (): JSX.Element => (
 
 const ActiveButtonGlass = ({
   className,
-  roundedClass = "rounded-[20px]",
+  style,
 }: {
   className: string;
-  roundedClass?: string;
+  style?: React.CSSProperties;
 }): JSX.Element => (
-  <div className={`${className} overflow-hidden ${roundedClass}`}>
-    <div className={`absolute inset-0 bg-[rgba(255,255,255,0.04)] ${roundedClass}`} />
-    <div
-      className={`absolute inset-0 bg-[rgba(30,30,30,0.25)] ${roundedClass}`}
-      style={{ mixBlendMode: "plus-lighter" }}
-    />
+  <div className={`${className} pointer-events-none overflow-hidden rounded-[20px]`} style={style}>
+    <div className="absolute inset-0 overflow-hidden rounded-[20px] [clip-path:inset(0_round_20px)]">
+      <LiquidGlass
+        className="h-full w-full overflow-hidden rounded-[20px]"
+        style={{ position: "absolute", top: "50%", left: "50%" }}
+        mode="shader"
+        displacementScale={11}
+        blurAmount={0.015}
+        saturation={108}
+        aberrationIntensity={0}
+        elasticity={0}
+        cornerRadius={20}
+        padding="0px"
+      >
+        <div className="relative h-full w-full rounded-[20px]">
+          <div className="absolute inset-0 rounded-[20px] bg-[rgba(255,255,255,0.04)]" />
+          <div
+            className="absolute inset-0 rounded-[20px] bg-[rgba(30,30,30,0.25)]"
+            style={{ mixBlendMode: "plus-lighter" }}
+          />
+        </div>
+      </LiquidGlass>
+    </div>
   </div>
 );
 
-const EditPersonIcon = ({ className }: { className: string }): JSX.Element => (
-  <svg className={className} viewBox="0 0 65 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+const EditPersonIcon = ({
+  className,
+  style,
+}: {
+  className: string;
+  style?: React.CSSProperties;
+}): JSX.Element => (
+  <svg
+    className={className}
+    style={style}
+    viewBox="0 0 65 57"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
     <path
       d="M50.7061 48C50.7061 44.8987 50.7061 43.3481 50.3185 42.0863C49.446 39.2454 47.195 37.0223 44.3186 36.1605C43.0411 35.7778 41.4711 35.7778 38.331 35.7778H27.0811C23.941 35.7778 22.371 35.7778 21.0935 36.1605C18.2171 37.0223 15.9661 39.2454 15.0936 42.0863C14.7061 43.3481 14.7061 44.8987 14.7061 48M42.8311 18C42.8311 23.5228 38.2979 28 32.7061 28C27.1142 28 22.5811 23.5228 22.5811 18C22.5811 12.4772 27.1142 8 32.7061 8C38.2979 8 42.8311 12.4772 42.8311 18Z"
       stroke="#226AB3"
@@ -185,6 +229,15 @@ export const CharacterCreationSidebarSection = ({
   const finishLineWidth = Math.max(120, contentWidth - 43 - 11);
   const carouselWidth = Math.max(280, width - 65);
   const uploadFrameWidth = 163;
+
+  useEffect(() => {
+    // Preload edit-mode remote assets so mode switches feel immediate.
+    EDIT_ASSET_URLS.forEach((src) => {
+      const image = new Image();
+      image.decoding = "async";
+      image.src = src;
+    });
+  }, []);
 
   useEffect(() => {
     if (!isDragging) {
@@ -296,6 +349,23 @@ export const CharacterCreationSidebarSection = ({
         style={{ width: effectiveWidth }}
       >
         <div className="absolute left-0 top-0 h-full w-full rounded-xl bg-[#00000001] backdrop-blur-[6.0px] backdrop-brightness-[92.0%] backdrop-saturate-[105.0%] [-webkit-backdrop-filter:blur(6.0px)_brightness(92.0%)_saturate(105.0%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.30),inset_1px_0_0_rgba(255,255,255,0.24),inset_0_-1px_4px_rgba(0,0,0,0.11),inset_-1px_0_4px_rgba(0,0,0,0.09)]" />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl [clip-path:inset(0_round_12px)]">
+          <LiquidGlass
+            className="h-full w-full overflow-hidden rounded-xl"
+            style={{ position: "absolute", top: "50%", left: "50%" }}
+            mode="shader"
+            displacementScale={12}
+            blurAmount={0.012}
+            saturation={108}
+            aberrationIntensity={0}
+            elasticity={0}
+            cornerRadius={12}
+            padding="0px"
+          >
+            <div className="h-full w-full rounded-xl bg-[rgba(255,255,255,0.06)]" />
+          </LiquidGlass>
+        </div>
+        <div className="pointer-events-none absolute inset-0 rounded-xl bg-[linear-gradient(135deg,rgba(255,255,255,0.18)_0%,rgba(255,255,255,0.05)_34%,rgba(0,0,0,0.09)_100%)] opacity-60" />
 
         <div
           className={`absolute inset-0 ${
@@ -353,7 +423,15 @@ export const CharacterCreationSidebarSection = ({
                 <div className="absolute inset-0 rounded-[16px] bg-[#0f0f0f] [mix-blend-mode:color-dodge]" />
                 <div className="absolute inset-0 rounded-[16px] bg-[rgba(245,245,245,0.4)]" />
                 {isEditFocusSelected ? (
-                  <ActiveButtonGlass className="absolute left-[11px] top-[3px] h-[57px] w-[65px]" />
+                  <ActiveButtonGlass
+                    className="absolute"
+                    style={{
+                      left: EDIT_LEFT_INDICATOR_LEFT,
+                      top: EDIT_TYPE_SLOT_TOP,
+                      width: EDIT_TYPE_SLOT_WIDTH,
+                      height: EDIT_TYPE_SLOT_HEIGHT,
+                    }}
+                  />
                 ) : null}
                 <img
                   className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2"
@@ -380,7 +458,7 @@ export const CharacterCreationSidebarSection = ({
                       height: EDIT_TYPE_SLOT_HEIGHT,
                     }}
                   >
-                    <ActiveButtonGlass className="absolute inset-0" roundedClass="rounded-[20px]" />
+                    <ActiveButtonGlass className="absolute inset-0" />
                   </div>
                 ) : null}
                 {selectedEditType === "shield" ? (
@@ -393,7 +471,7 @@ export const CharacterCreationSidebarSection = ({
                       height: EDIT_TYPE_SLOT_HEIGHT,
                     }}
                   >
-                    <ActiveButtonGlass className="absolute inset-0" roundedClass="rounded-[20px]" />
+                    <ActiveButtonGlass className="absolute inset-0" />
                   </div>
                 ) : null}
                 <button
@@ -422,11 +500,21 @@ export const CharacterCreationSidebarSection = ({
                   aria-pressed={selectedEditType === "shield"}
                   onClick={() => setSelectedEditType("shield")}
                 />
-                <EditPersonIcon className="pointer-events-none absolute left-[4px] top-[3px] h-[57px] w-[65px]" />
+                <EditPersonIcon
+                  className="pointer-events-none absolute h-[57px] w-[65px]"
+                  style={{
+                    left: EDIT_TYPE_PERSON_LEFT,
+                    top: EDIT_TYPE_SLOT_TOP,
+                  }}
+                />
                 <img
-                  className="pointer-events-none absolute left-[78px] top-[10px] h-[44px] w-[35px]"
+                  className="pointer-events-none absolute h-[44px] w-[35px]"
                   alt="Shield option"
                   src={EDIT_SHIELD_ICON_SRC}
+                  style={{
+                    left: EDIT_SHIELD_ICON_LEFT,
+                    top: EDIT_SHIELD_ICON_TOP,
+                  }}
                 />
               </div>
             </div>

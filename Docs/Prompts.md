@@ -22,3 +22,9 @@ Settings button: https://www.figma.com/design/d7RuG0UIpO8aTA4xdcyr2h/Untitled?no
 **Continue Button**
 I have added a continue button to the bottom right of the canvas area: 
 https://www.figma.com/design/d7RuG0UIpO8aTA4xdcyr2h/Untitled?node-id=126-437&m=dev
+
+ok good. i am very happy with the results that the liquid glass library brought us and would like to apply this to some of the buttons which also have liquid glass in figma for which we tried to recreate the effect ourselves up until now.
+
+Let's start with the resize sidebar button. I would like you to do this by analyzing the figma button and recreating the liquid glass effect using the library. 
+
+Link: https://www.figma.com/design/d7RuG0UIpO8aTA4xdcyr2h/Untitled?node-id=126-317&m=dev

@@ -52,7 +52,11 @@ const StepArrow = ({ active }: { active: boolean }): JSX.Element => {
   );
 };
 
-const GlassIconButton = ({ children }: { children: JSX.Element }): JSX.Element => {
+const GlassIconButton = ({
+  children,
+}: {
+  children: JSX.Element;
+}): JSX.Element => {
   return (
     <div className="relative h-[34.42px] w-[34.42px] shrink-0 rounded-full">
       <div className="absolute inset-[1.12px] overflow-hidden rounded-full [clip-path:inset(0_round_999px)]">
@@ -78,7 +82,11 @@ const GlassIconButton = ({ children }: { children: JSX.Element }): JSX.Element =
   );
 };
 
-const GlassImportButton = ({ iconSrc }: { iconSrc: string }): JSX.Element => {
+const GlassImportButton = ({
+  iconSrc,
+}: {
+  iconSrc: string;
+}): JSX.Element => {
   return (
     <div className="relative h-[49px] w-[105px] shrink-0 overflow-hidden rounded-[24.622px]">
       <div className="absolute inset-[1.12px] overflow-hidden rounded-[23.5px] [clip-path:inset(0_round_23.5px)]">

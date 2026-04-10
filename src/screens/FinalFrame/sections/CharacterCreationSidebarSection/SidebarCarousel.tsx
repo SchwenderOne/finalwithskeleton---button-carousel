@@ -179,7 +179,11 @@ const CarouselArrow = ({
   );
 };
 
-export const SidebarCarousel = ({ width = 353 }: { width?: number }): JSX.Element => {
+export const SidebarCarousel = ({
+  width = 353,
+}: {
+  width?: number;
+}): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(1);
   const carouselScale = Math.min(1, width / 353);
   const scaledWidth = 353 * carouselScale;

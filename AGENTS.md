@@ -5,11 +5,6 @@
 - Repository root for active work: `finalwithskeleton---final-frame-1one/`
 - Stack: React 18 + Vite + TypeScript
 - Styling: Tailwind utility classes embedded directly in TSX
-- Liquid glass rendering for key controls now uses `liquid-glass-react` (not only handcrafted blur/shadow layers)
-- `liquid-glass-react` is now vendored locally and resolved through Vite alias:
-  - source: `src/vendor/liquid-glass-react/`
-  - alias config: `vite.config.ts` (`"liquid-glass-react" -> src/vendor/liquid-glass-react/index.tsx`)
-- The vendored glass implementation includes a resize measurement patch using `offsetWidth/offsetHeight` (fallback to `getBoundingClientRect`) to avoid border-size drift when the screen uses CSS transform scaling.
 - This codebase is an Anima-exported screen that is being refined manually rather than fully re-architected
 
 ## Start Here
@@ -23,7 +18,7 @@
 
 - Primary remote: `origin -> https://github.com/SchwenderOne/finalwithskeleton---final-frame-1one`
 - Mirrored replacement remote: `button-carousel -> https://github.com/SchwenderOne/finalwithskeleton---button-carousel.git`
-- Do not assume local changes are already pushed; verify with `git status` and `git log --oneline --decorate -n 5` before concluding push state.
+- Current work has already been pushed to both remotes during this session
 
 ## Current Layout Decisions
 
@@ -33,26 +28,7 @@
 - The screen should use proportional scaling only: one uniform scale factor derived from viewport width/height.
 - The dead-space/background outside the scaled frame must remain a flat solid `#000103`.
 - The main screen background layer under the navbar must keep the same rounded top corners as the glass layer above it.
-- The paper/background texture below the navbar currently relies on:
-  - `MainBackgroundLayer.tsx` + `MainBackgroundRecipe.ts` with tokenized values
-  - a dedicated local noise texture image (`src/assets/noise-texture-background.png`)
-  - base white + glass tint layer (`rgba(0,0,0,0.004)`) with `5px` blur + paper tint overlay (`rgba(255,255,255,0.2)`)
-  - noise blend currently set via recipe (`noiseBlendMode`), do not change ad hoc in component markup
-
-## Collapsed Controls Notes
-
-- File: `src/screens/FinalFrame/FinalFrame.tsx`
-- Sidebar collapsed width is currently `76`.
-- Collapsed resize-handle left offset is currently `-11`.
-- Collapsed preview left is intentionally computed from handle geometry, not only `SIDEBAR_LEFT + width + gap`, so canvas spacing remains balanced in collapsed mode.
-- The top mode switcher has a dedicated collapsed mode:
-  - icon-only
-  - vertical stack
-  - `37x107` container
-  - centerline aligned to the collapsed resize handle.
-- Non-collapsed mode switcher selection indicator is a moving fixed pill in `ControlGroups.tsx`:
-  - per-mode tuned width/left values are intentional for Figma matching
-  - keep text/icon slot positions stable when switching between variation/create/edit.
+- The right preview canvas currently contains a zoomable/pannable content layer, an uploaded-character layer, rulers, and a dedicated dot-grid layer. Treat these as one coordinated viewport system when editing.
 
 ## Navbar Notes
 
@@ -61,58 +37,47 @@
 - Bottom corners are intentionally not rounded.
 - The top-right button group has already been replaced from Figma and should not be reverted to the older oversized export.
 - The left nav items were manually aligned against the right button cluster; preserve that alignment when editing.
-- Current top-right order: `Save` -> `Import` -> (`Play`, `Info`, `Settings`).
-- `Play`/`Info`/`Settings` use a shared `GlassIconButton` (`34.42x34.42`) with:
-  - outer white border ring as the true border (not inner stroke)
-  - clipped liquid-glass layer to avoid square overflow artifacts.
-- `Import` uses a dedicated `GlassImportButton` (`105x49`) with the same outer-border-ring strategy.
-- The spacing between `Play`/`Info`/`Settings` is intentionally tighter than the outer group gap (`21.75px` internal trio gap).
 
 ## Sidebar Notes
 
 - File: `src/screens/FinalFrame/sections/CharacterCreationSidebarSection/CharacterCreationSidebarSection.tsx`
 - There was a redundant shadow/card layer behind the sidebar in `FinalFrame.tsx`; it has already been removed.
-- Sidebar content is now mode-aware via `mode` prop from `FinalFrame.tsx`:
-  - `create`/`variation`: existing create-state content
-  - `edit`: Figma-matched edit-state content (header text/icon + middle controls)
-- The resize-sidebar handle has been manually refined and now uses two render paths:
-  - expanded state: custom `ExpandedResizeSidebarHandleIcon` with `liquid-glass-react`
-  - collapsed state: Figma-derived `17:4914` structure for immediate arrow visibility and glass behavior.
-- Expanded resize-handle specifics to preserve:
-  - arrow points left
-  - arrow color is `#999999`
-  - border ring is the outer edge (not an inner stroke)
-  - includes additional white fill overlay at `50%` opacity.
-- Sidebar carousel left/right arrow buttons (`SidebarCarousel.tsx`) now follow the same liquid-glass treatment as the resize handle:
-  - centered arrows
-  - arrow color `#999999`
-  - white fill overlay at `50%` opacity.
-- Upload media icon area:
-  - keep the round glass background container
-  - cloud glyph is custom inline SVG centered in `34x25`
-  - avoid reintroducing black outline/stroke from prior asset stacking.
-- Resize/collapse interaction is continuous:
-  - dragging below threshold collapses during drag (no pointer-up required)
-  - dragging while collapsed expands continuously
-  - click toggle is still supported.
-- Sidebar content now uses shared centering math on resize for main blocks (header, prompt, section rows, upload area, finish row, create button).
-- The create button currently uses fixed width `154px` and centered positioning to match Figma proportions while sidebar width changes.
-- Edit-state control row interaction is now functional:
-  - left focus button toggles independently on/off
-  - right person/shield selector is mutually exclusive
-  - active-state liquid glass indicator uses Figma node `126:560` layering (`rgba(255,255,255,0.04)` + `plus-lighter` overlay)
-  - person and shield hit areas/selection indicators are both `65x57` and icon-centered
+- The resize-sidebar handle has been manually refined and is still somewhat sensitive visually.
+- The reference upload card in the create sidebar is temporarily functional:
+  - click opens an image file picker
+  - drag and drop also uploads an image
+  - the uploaded file name replaces the placeholder text in the card
+- The current upload flow is intentionally temporary and is wired directly to the preview canvas via `FinalFrame.tsx`.
 - If touching the resize handle again:
   - compare against Figma node `61:1654`
   - verify both shape and arrow direction visually
   - avoid assuming the exported asset orientation is correct
+
+## Canvas Notes
+
+- Files:
+  - `src/screens/FinalFrame/FinalFrame.tsx`
+  - `src/screens/FinalFrame/sections/PreviewStageSection/CanvasDotGrid.tsx`
+- Canvas wheel interaction is handled with native non-passive listeners on the preview viewport, not only React `onWheel`.
+- Do not remove the `gesturestart` / `gesturechange` / `gestureend` prevention on the canvas container unless page-zoom behavior is being intentionally revisited.
+- The dotted background is no longer a CSS `radial-gradient` background on the canvas container.
+- The dot grid is now an SVG pattern layer in `CanvasDotGrid.tsx`.
+  - it must always cover the full visible canvas area, even when zoomed out
+  - zoom should be applied to the pattern, not by shrinking the whole SVG coverage area
+  - panning/zooming roughness becomes visible quickly if the grid falls back to repaint-heavy CSS background math
+- Uploaded characters are positioned in world-space coordinates and then projected into screen-space from `canvasViewport`.
+  - keep uploaded content tied to `originX`, `originY`, and `zoom`
+  - do not make the uploaded image screen-fixed unless explicitly requested
+- Current canvas zoom behavior:
+  - plain wheel/touchpad scroll pans the canvas
+  - `Ctrl` / `Cmd` + scroll zooms the canvas
+  - these interactions should affect only the canvas when the pointer is over it
 
 ## Figma Workflow
 
 - For any Figma-driven visual fix, always fetch the node first with Figma MCP:
   - `get_design_context`
   - `get_screenshot`
-- Current full-screen source-of-truth node for this screen: `126:158` (not the older background-only `61:1854`).
 - Do not guess from memory when matching buttons, nav controls, or glass effects.
 - Prefer adapting the current codebase’s existing Tailwind/TSX patterns over pasting raw MCP output directly.
 
@@ -126,27 +91,14 @@
 ## High-Risk Areas
 
 - `src/screens/FinalFrame/FinalFrame.tsx`
-  - contains frame scaling logic plus collapsed-mode spacing/alignment rules for preview and top mode switcher
-- `src/screens/FinalFrame/sections/PreviewStageSection/ControlGroups.tsx`
-  - contains tuned mode-switcher indicator widths/offsets and fixed slot geometry; small value changes can break centering/text alignment.
+  - contains the frame scaling logic, canvas viewport state, upload wiring, zoom/pan event handling, and right preview sizing
 - `src/screens/FinalFrame/sections/EditorStepNavigationSection/EditorStepNavigationSection.tsx`
   - small spacing or radius changes are immediately visible
-- `src/screens/FinalFrame/sections/PreviewStageSection/MainBackgroundLayer.tsx`
-  - owns layer stack ordering for white/glass/noise and navbar overlap behavior
-- `src/screens/FinalFrame/sections/PreviewStageSection/MainBackgroundRecipe.ts`
-  - central source of truth for blur/tint/noise blend knobs; changing recipe values can shift whole-screen look
 - `src/screens/FinalFrame/sections/CharacterCreationSidebarSection/CharacterCreationSidebarSection.tsx`
   - many absolute layers overlap; small changes can create duplicate-card or shadow artifacts
-  - contains drag state machine for expand/collapse thresholds
-  - contains fixed-width Figma-style create button styling that is sensitive to subtle effect changes
-  - now contains expanded resize-handle liquid-glass implementation where small stroke/rotation/overlay changes are highly visible
-  - contains edit-mode selection geometry (left focus toggle + person/shield selector) where 1-2px offsets are visibly wrong
-- `src/screens/FinalFrame/sections/CharacterCreationSidebarSection/SidebarCarousel.tsx`
-  - arrow button liquid-glass overlays and border rings are sensitive to tiny centering/opacity changes
-- `vite.config.ts`
-  - owns alias mapping to the vendored liquid-glass implementation; changing/removing alias can reintroduce build/runtime instability.
-- `src/vendor/liquid-glass-react/index.tsx`
-  - local patched dependency source; update carefully and preserve the resize measurement fix unless intentionally superseded.
+- `src/screens/FinalFrame/sections/PreviewStageSection/CanvasDotGrid.tsx`
+  - easy to regress coverage when zoomed out
+  - easy to reintroduce rough motion if the grid is converted back to a repaint-heavy background implementation
 
 ## Recommended Session Workflow
 
@@ -157,3 +109,6 @@
 5. Make a minimal patch
 6. Run `npm run build`
 7. Commit only after visual confirmation or a precise user-approved stop point
+
+
+
