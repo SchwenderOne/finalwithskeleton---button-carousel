@@ -125,7 +125,7 @@ export const EditorStepNavigationSection = ({
   onStepChange,
 }: EditorStepNavigationSectionProps): JSX.Element => {
   const navBackgroundSrc =
-    "https://www.figma.com/api/mcp/asset/d89c974d-4887-4e3a-ac59-a65fe60098b4";
+    "https://www.figma.com/api/mcp/asset/4e705bd8-2890-4d1a-b7fb-9f0972225f72";
   const playIconSrc =
     "https://www.figma.com/api/mcp/asset/86534b72-963d-48d0-921e-1fe5bd7f6550";
   const infoIconSrc =
